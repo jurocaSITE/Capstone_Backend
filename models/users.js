@@ -10,7 +10,7 @@ class User {
 			email: user.email,
 			first_name: user.first_name,
 			last_name: user.last_name,
-			user_name: user.user_name,
+			username: user.username,
 			profile_picture: user.profile_picture,
 			date_of_birth: user.date_of_birth,
 			goal: user.goal,
@@ -51,7 +51,7 @@ class User {
 			"first_name",
 			"last_name",
 			"date_of_birth",
-			"user_name",
+			"username",
 			"email",
 			"password",
 		];
@@ -81,12 +81,12 @@ class User {
 		// create a new user in the db with all their info
 		// return the user
 		const userResult = await db.query(
-			`INSERT INTO users (first_name, last_name, date_of_birth, user_name, password,email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, user_name, password, email;`,
+			`INSERT INTO users (first_name, last_name, date_of_birth, username, password,email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, username, password, email;`,
 			[
 				credentials.first_name,
 				credentials.last_name,
 				credentials.date_of_birth,
-				credentials.user_name,
+				credentials.username,
 				hashedPassword,
 				lowercaseEmail,
 			]

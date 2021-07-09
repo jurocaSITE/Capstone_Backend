@@ -9,7 +9,7 @@ CREATE TABLE users (
     date_of_birth     DATE, 
     goal              INTEGER,
     genre_interest    TEXT[],
-    created_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW()
 );
 
 CREATE TABLE ratings_and_reviews (
@@ -18,16 +18,16 @@ CREATE TABLE ratings_and_reviews (
     review_body       TEXT,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     book_id           TEXT NOT NULL,
-    created_at        DATE DEFAULT NOW, 
-    updated_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW(), 
+    updated_at        DATE DEFAULT NOW()
 );
 
 CREATE TABLE reviews_replies (
     id                SERIAL PRIMARY KEY,
     rating_id         INTEGER REFERENCES ratings_and_reviews(id) ON DELETE CASCADE,
     reply_body        TEXT NOT NULL,
-    created_at        DATE DEFAULT NOW, 
-    updated_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW(), 
+    updated_at        DATE DEFAULT NOW()
 );
 
 CREATE TABLE lists (
@@ -36,7 +36,7 @@ CREATE TABLE lists (
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     image             TEXT,
     reply_body        TEXT NOT NULL,
-    created_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW()
 );
 
 CREATE TABLE list_contents (
@@ -57,7 +57,7 @@ CREATE TABLE forums (
     title             TEXT NOT NULL,
     description       TEXT NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    created_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW()
 
 );
 
@@ -68,7 +68,7 @@ CREATE TABLE posts (
     post              TEXT NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     vote              INTEGER,
-    created_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW()
 );
 
 CREATE TABLE forums_replies (
@@ -76,5 +76,5 @@ CREATE TABLE forums_replies (
     post_id           INTEGER REFERENCES posts(id) ON DELETE CASCADE,
     reply_body        TEXT NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    created_at        DATE DEFAULT NOW
+    created_at        DATE DEFAULT NOW()
 );
