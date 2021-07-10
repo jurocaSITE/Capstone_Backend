@@ -2,14 +2,14 @@ CREATE TABLE users (
     id                SERIAL PRIMARY KEY,
     first_name        VARCHAR(50) NOT NULL,
     last_name         VARCHAR(50) NOT NULL,
-    username          VARCHAR(50) NOT NULL,
+    username          VARCHAR(50) NOT NULL, --Do we ant to make it unique?
     password          TEXT NOT NULL,
     email             TEXT NOT NULL UNIQUE CHECK (POSITION('@' IN email) > 1),
     profile_picture   TEXT,
-    date_of_birth     DATE, 
+    date_of_birth     TIMESTAMP,
     goal              INTEGER,
     genre_interest    TEXT[],
-    created_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE ratings_and_reviews (
@@ -18,16 +18,16 @@ CREATE TABLE ratings_and_reviews (
     review_body       TEXT,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     book_id           TEXT NOT NULL,
-    created_at        DATE DEFAULT NOW(), 
-    updated_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW(), 
+    updated_at        TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE reviews_replies (
     id                SERIAL PRIMARY KEY,
     rating_id         INTEGER REFERENCES ratings_and_reviews(id) ON DELETE CASCADE,
     reply_body        TEXT NOT NULL,
-    created_at        DATE DEFAULT NOW(), 
-    updated_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW(), 
+    updated_at        TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE lists (
@@ -36,14 +36,14 @@ CREATE TABLE lists (
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     image             TEXT,
     reply_body        TEXT NOT NULL,
-    created_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE list_contents (
     id                SERIAL PRIMARY KEY,
     list_id           INTEGER REFERENCES lists(id) ON DELETE CASCADE,
     book_id           TEXT NOT NULL,
-    added_on          DATE DEFAULT NOW
+    added_on          TIMESTAMP DEFAULT NOW
 );
 
 CREATE TABLE liked_authors (
@@ -57,7 +57,7 @@ CREATE TABLE forums (
     title             TEXT NOT NULL,
     description       TEXT NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    created_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW()
 
 );
 
@@ -68,7 +68,7 @@ CREATE TABLE posts (
     post              TEXT NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     vote              INTEGER,
-    created_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE forums_replies (
@@ -76,5 +76,5 @@ CREATE TABLE forums_replies (
     post_id           INTEGER REFERENCES posts(id) ON DELETE CASCADE,
     reply_body        TEXT NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    created_at        DATE DEFAULT NOW()
+    created_at        TIMESTAMP DEFAULT NOW()
 );

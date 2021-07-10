@@ -24,6 +24,62 @@ router.post("/register", async (req, res, next) => {
 	}
 });
 
+// update user profile information
+router.put(
+	"/update-personal-information",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const updated_user = await User.updateUserInformation({
+				user,
+				new_user_info: req.body,
+			});
+			return res.status(204).json({ updated_user });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+// set user genre interest
+router.put(
+	"/update-genre-interests",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const genre_interests = await User.updateUserGenreInterests({
+				user,
+				user_genre_interests: req.body,
+			});
+
+			return res.status(204).json({ genre_interests });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+// set user reading goal
+router.put(
+	"/update-reading-goal",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_reading_goal = await User.updateUserReadingGoal({
+				user,
+				reading_goal: req.body,
+			});
+
+			return res.status(204).json({ new_reading_goal });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 // I wan to take the token that was sent in this request and I want to turn it into a user in our data base, who can be then sent back to the client with all their information
 router.get("/me", security.requireAuthenticatedUser, async (req, res, next) => {
 	try {

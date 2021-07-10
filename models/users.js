@@ -50,7 +50,6 @@ class User {
 		const requiredFields = [
 			"first_name",
 			"last_name",
-			"date_of_birth",
 			"username",
 			"email",
 			"password",
@@ -81,11 +80,10 @@ class User {
 		// create a new user in the db with all their info
 		// return the user
 		const userResult = await db.query(
-			`INSERT INTO users (first_name, last_name, date_of_birth, username, password,email) VALUES ($1, $2, $3, $4, $5, $6) RETURNING first_name, last_name, date_of_birth, username, password, email;`,
+			`INSERT INTO users (first_name, last_name, username, password,email) VALUES ($1, $2, $3, $4, $5) RETURNING first_name, last_name, username, password, email;`,
 			[
 				credentials.first_name,
 				credentials.last_name,
-				credentials.date_of_birth,
 				credentials.username,
 				hashedPassword,
 				lowercaseEmail,
@@ -97,6 +95,107 @@ class User {
 		return User.makePublicUser(user);
 	}
 
+	static async updateUserInformation({ user, new_user_info }) {
+		const requiredFields = [
+			"first_name",
+			"last_name",
+			"profile_picture",
+			"date_of_birth",
+		];
+		requiredFields.forEach((field) => {
+			if (!new_user_info.hasOwnProperty(field)) {
+				throw new BadRequestError(
+					`Required field -${field} - missing from request body.`
+				);
+			}
+		});
+
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const results = await db.query(
+			`
+				UPDATE users
+				SET first_name = $1, 
+					last_name = $2, 
+					profile_picture = $3,
+					date_of_birth = $4
+				WHERE id = $5
+				RETURNING first_name, last_name, profile_picture, date_of_birth;
+			`,
+			[
+				new_user_info.first_name,
+				new_user_info.last_name,
+				new_user_info.profile_picture,
+				new_user_info.date_of_birth,
+				userId.rows[0].id,
+			]
+		);
+
+		return results.rows[0];
+	}
+
+	//set user's genre interests
+	static async updateUserGenreInterests({ user, user_genre_interests }) {
+		const requiredFields = ["genre_interest"];
+		requiredFields.forEach((field) => {
+			if (!user_genre_interests.hasOwnProperty(field)) {
+				throw new BadRequestError(
+					`Required field -${field} - missing from request body.`
+				);
+			}
+		});
+
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const results = await db.query(
+			`
+				UPDATE users
+				SET genre_interest = $1
+				WHERE id = $2
+				RETURNING genre_interest;
+			`,
+			[user_genre_interests.genre_interest, userId.rows[0].id]
+		);
+
+		return results.rows[0];
+	}
+
+	// update/set user's reading goal
+	static async updateUserReadingGoal({ user, reading_goal }) {
+		const requiredFields = ["goal"];
+		requiredFields.forEach((field) => {
+			if (!reading_goal.hasOwnProperty(field)) {
+				throw new BadRequestError(
+					`Required field -${field} - missing from request body.`
+				);
+			}
+		});
+
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const results = await db.query(
+			`
+				UPDATE users
+				SET goal = $1
+				WHERE id = $2
+				RETURNING goal;
+			`,
+			[reading_goal.goal, userId.rows[0].id]
+		);
+
+		return results.rows[0];
+	}
+
+	// change email
+	//
+	//change password
+	//
 	static async fetchUserByEmail(email) {
 		if (!email) {
 			throw new BadRequestError("No email provided");
