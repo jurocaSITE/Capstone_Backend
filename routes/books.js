@@ -1,7 +1,5 @@
 const express = require("express");
 const Book = require("../models/books");
-const { createUserJwt } = require("../utils/tokens"); //utility function to generate json we tokens
-const security = require("../middleware/security"); // middleware
 const router = express.Router();
 
 //get all books with specific keyword
@@ -25,6 +23,17 @@ router.get("/id/:book_id", async (req, res, next) => {
 		book = await Book.getBookById(book_id);
 
 		return res.status(200).json({ book });
+	} catch (err) {
+		next(err);
+	}
+});
+
+//get top seller books
+router.get("/top/sellers", async (req, res, next) => {
+	try {
+		top_sellers = await Book.getTopSellers();
+
+		return res.status(200).json({ top_sellers });
 	} catch (err) {
 		next(err);
 	}
