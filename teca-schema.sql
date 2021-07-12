@@ -43,7 +43,7 @@ CREATE TABLE list_contents (
     id                SERIAL PRIMARY KEY,
     list_id           INTEGER REFERENCES lists(id) ON DELETE CASCADE,
     book_id           TEXT NOT NULL,
-    added_on          TIMESTAMP DEFAULT NOW
+    added_on          TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE liked_authors (
