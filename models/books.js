@@ -1,8 +1,6 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
-const { BadRequestError } = require("../utils/errors");
 const fetch = require("node-fetch");
-// process.env.NYT_API_KEY --> to get the API Key from the .env file
 
 class Book {
 	//get alll book siwth specific key word
@@ -54,6 +52,33 @@ class Book {
 			maturityRating: responseData.volumeInfo.maturityRating,
 			imageLinks: responseData.volumeInfo.imageLinks,
 		};
+	}
+
+	//get top seller books
+	static async getTopSellers() {
+		const get_top_sellers_url = `https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=${process.env.NYT_API_KEY}`;
+
+		const response = await fetch(get_top_sellers_url);
+		const responseData = await response.json();
+
+		let top_books = [responseData.results.lists[0].books.length];
+
+		for (let i = 0; i < responseData.results.lists[0].books.length; i++) {
+			top_books[i] = {
+				author: responseData.results.lists[0].books[i].author,
+				book_image: responseData.results.lists[0].books[i].book_image,
+				book_image_width:
+					responseData.results.lists[0].books[i].book_image_width,
+				book_image_height:
+					responseData.results.lists[0].books[i].book_image_height,
+				description: responseData.results.lists[0].books[i].description,
+				publisher: responseData.results.lists[0].books[i].publisher,
+				title: responseData.results.lists[0].books[i].title,
+				buy_links: responseData.results.lists[0].books[i].buy_links,
+			};
+		}
+
+		return top_books;
 	}
 }
 
