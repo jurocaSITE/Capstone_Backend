@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/:key_word", async (req, res, next) => {
 	try {
 		const { key_word } = req.params;
-		books = await Book.getAllBooksByyKeyword(key_word);
+		books = await Book.getAllBooksByKeyword(key_word);
 
 		// console.log("ECDQWCEWCEFWCDWDEWC:", books[0]); --> how to acces each book in the books array
 

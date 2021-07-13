@@ -3,9 +3,8 @@ const fetch = require("node-fetch");
 
 class Book {
 	//get alll book siwth specific key word
-	static async getAllBooksByyKeyword(key_word) {
+	static async getAllBooksByKeyword(key_word) {
 		let get_book_by_name_url = `https://www.googleapis.com/books/v1/volumes?q=${key_word}`;
-		console.log(get_book_by_name_url); //TODO: delete comment
 
 		const response = await fetch(get_book_by_name_url);
 		const responseData = await response.json();
@@ -26,8 +25,6 @@ class Book {
 				imageLinks: responseData.items[i].volumeInfo.imageLinks,
 			};
 		}
-
-		console.log(booksReturned);
 
 		return booksReturned;
 	}

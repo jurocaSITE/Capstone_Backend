@@ -90,6 +90,32 @@ class User {
 			]
 		);
 
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			lowercaseEmail,
+		]);
+
+		// TODO: move to separate function
+		await db.query(
+			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
+			`,
+			["Want To Read", userId.rows[0].id, "DefaultImageURLHEre"]
+		);
+		await db.query(
+			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
+			`,
+			["Currently Reading", userId.rows[0].id, "DefaultImageURLHEre"]
+		);
+		await db.query(
+			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
+			`,
+			["Did Not Finish", userId.rows[0].id, "DefaultImageURLHEre"]
+		);
+		await db.query(
+			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
+			`,
+			["Finished", userId.rows[0].id, "DefaultImageURLHEre"]
+		);
+
 		const user = userResult.rows[0];
 
 		return User.makePublicUser(user);
