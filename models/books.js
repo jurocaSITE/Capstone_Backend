@@ -76,6 +76,21 @@ class Book {
 
 		return top_books;
 	}
+
+	// get top seller by name
+	static async getTopSellersByName(title) {
+		const top_sellers = await Book.getTopSellers();
+
+		let top_seller = {};
+
+		for (let i = 0; i < top_sellers.length; i++) {
+			if (top_sellers[i].title === title) {
+				top_seller = top_sellers[i];
+			}
+		}
+
+		return top_seller;
+	}
 }
 
 module.exports = Book;
