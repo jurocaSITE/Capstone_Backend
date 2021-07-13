@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const { NotFoundError } = require("./utils/errors");
 const authRoutes = require("./routes/auth");
 const bookRoutes = require("./routes/books");
+const listRoutes = require("./routes/lists");
 const { PORT } = require("./config");
 const security = require("./middleware/security");
 
@@ -20,6 +21,7 @@ app.use(security.extractUserFromJwt);
 //! Routes
 app.use("/auth", authRoutes); //! this is a middleware too
 app.use("/books", bookRoutes); //! this is a middleware too
+app.use("/lists", listRoutes); //! this is a middleware too
 
 //! Error handling
 // This will handle all 404 Errors that were not matched by a route
