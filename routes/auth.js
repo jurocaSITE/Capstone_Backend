@@ -4,6 +4,7 @@ const { createUserJwt } = require("../utils/tokens"); //utility function to gene
 const security = require("../middleware/security"); // middleware
 const router = express.Router();
 
+//login
 router.post("/login", async (req, res, next) => {
 	try {
 		const user = await User.login(req.body);
@@ -14,6 +15,7 @@ router.post("/login", async (req, res, next) => {
 	}
 });
 
+// register
 router.post("/register", async (req, res, next) => {
 	try {
 		const user = await User.register({ ...req.body, isAdmin: false });
@@ -55,6 +57,21 @@ router.put(
 			});
 
 			return res.status(204).json({ genre_interests });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+// get all user interests
+router.get(
+	"/user-genre-interests",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const user_genre_interests = await User.getAllUserGenreInterests(user);
+			return res.status(200).json({ user_genre_interests });
 		} catch (err) {
 			next(err);
 		}

@@ -190,6 +190,16 @@ class User {
 		return results.rows[0];
 	}
 
+	// get all user's genre interests
+	static async getAllUserGenreInterests(user) {
+		const result = await db.query(
+			`SELECT genre_interest FROM users WHERE email = $1`,
+			[user.email]
+		);
+
+		return result.rows[0];
+	}
+
 	// update/set user's reading goal
 	static async updateUserReadingGoal({ user, reading_goal }) {
 		const requiredFields = ["goal"];
