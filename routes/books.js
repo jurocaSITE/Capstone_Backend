@@ -6,7 +6,7 @@ const router = express.Router();
 router.get("/:key_word", async (req, res, next) => {
 	try {
 		const { key_word } = req.params;
-		books = await Book.getAllBooksByyKeyword(key_word);
+		books = await Book.getAllBooksByKeyword(key_word);
 
 		// console.log("ECDQWCEWCEFWCDWDEWC:", books[0]); --> how to acces each book in the books array
 
@@ -34,6 +34,18 @@ router.get("/top/sellers", async (req, res, next) => {
 		top_sellers = await Book.getTopSellers();
 
 		return res.status(200).json({ top_sellers });
+	} catch (err) {
+		next(err);
+	}
+});
+
+//get top seller by name
+router.get("/top/sellers/:title", async (req, res, next) => {
+	try {
+		const { title } = req.params;
+		top_seller = await Book.getTopSellersByName(title);
+
+		return res.status(200).json({ top_seller });
 	} catch (err) {
 		next(err);
 	}

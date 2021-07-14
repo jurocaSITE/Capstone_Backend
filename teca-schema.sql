@@ -35,7 +35,6 @@ CREATE TABLE lists (
     list_name         VARCHAR(50) NOT NULL,
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     image             TEXT,
-    reply_body        TEXT NOT NULL,
     created_at        TIMESTAMP DEFAULT NOW()
 );
 

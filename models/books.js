@@ -1,10 +1,9 @@
-const bcrypt = require("bcrypt");
 const db = require("../db");
 const fetch = require("node-fetch");
 
 class Book {
 	//get alll book siwth specific key word
-	static async getAllBooksByyKeyword(key_word) {
+	static async getAllBooksByKeyword(key_word) {
 		let get_book_by_name_url = `https://www.googleapis.com/books/v1/volumes?q=${key_word}`;
 
 		const response = await fetch(get_book_by_name_url);
@@ -26,8 +25,6 @@ class Book {
 				imageLinks: responseData.items[i].volumeInfo.imageLinks,
 			};
 		}
-
-		console.log(booksReturned);
 
 		return booksReturned;
 	}
@@ -78,6 +75,21 @@ class Book {
 		}
 
 		return top_books;
+	}
+
+	// get top seller by name
+	static async getTopSellersByName(title) {
+		const top_sellers = await Book.getTopSellers();
+
+		let top_seller = {};
+
+		for (let i = 0; i < top_sellers.length; i++) {
+			if (top_sellers[i].title === title) {
+				top_seller = top_sellers[i];
+			}
+		}
+
+		return top_seller;
 	}
 }
 
