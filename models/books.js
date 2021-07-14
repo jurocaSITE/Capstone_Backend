@@ -78,7 +78,7 @@ class Book {
 	}
 
 	// get top seller by name
-	static async getTopSellersByName(title) {
+	static async getTopSellerInfoByTitle(title) {
 		const top_sellers = await Book.getTopSellers();
 
 		let top_seller = {};
