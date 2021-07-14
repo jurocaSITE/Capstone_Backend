@@ -39,16 +39,16 @@ router.get("/top/sellers", async (req, res, next) => {
 	}
 });
 
-////get top seller by name
-//// router.get("/top/sellers/:title", async (req, res, next) => {
-//// 	try {
-//// 		const { title } = req.params;
-//// 		top_seller = await Book.getTopSellerInfoByTitle(title);
+//get top seller by name
+router.get("/top/sellers/:title", async (req, res, next) => {
+	try {
+		const { title } = req.params;
+		top_seller = await Book.getTopSellersByName(title);
 
-//// 		return res.status(200).json({ top_seller });
-//// 	} catch (err) {
-//// 		next(err);
-//// 	}
-//// });
+		return res.status(200).json({ top_seller });
+	} catch (err) {
+		next(err);
+	}
+});
 
 module.exports = router;

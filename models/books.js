@@ -60,21 +60,36 @@ class Book {
 		let top_books = [responseData.results.lists[0].books.length];
 
 		for (let i = 0; i < responseData.results.lists[0].books.length; i++) {
-			let book = await Book.getTopSellerInfoByTitle(
-				responseData.results.lists[0].books[i].title
-			);
-
-			top_books[i] = book;
+			top_books[i] = {
+				author: responseData.results.lists[0].books[i].author,
+				book_image: responseData.results.lists[0].books[i].book_image,
+				book_image_width:
+					responseData.results.lists[0].books[i].book_image_width,
+				book_image_height:
+					responseData.results.lists[0].books[i].book_image_height,
+				description: responseData.results.lists[0].books[i].description,
+				publisher: responseData.results.lists[0].books[i].publisher,
+				title: responseData.results.lists[0].books[i].title,
+				buy_links: responseData.results.lists[0].books[i].buy_links,
+			};
 		}
 
 		return top_books;
 	}
 
-	// get top seller info from google api by title
-	static async getTopSellerInfoByTitle(title) {
-		const top_sellers = await Book.getAllBooksByKeyword(title);
+	// get top seller by name
+	static async getTopSellersByName(title) {
+		const top_sellers = await Book.getTopSellers();
 
-		return top_sellers[0];
+		let top_seller = {};
+
+		for (let i = 0; i < top_sellers.length; i++) {
+			if (top_sellers[i].title === title) {
+				top_seller = top_sellers[i];
+			}
+		}
+
+		return top_seller;
 	}
 }
 
