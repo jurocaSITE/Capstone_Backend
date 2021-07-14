@@ -23,8 +23,6 @@ class Book {
 				categories: responseData.items[i].volumeInfo.categories,
 				maturityRating: responseData.items[i].volumeInfo.maturityRating,
 				imageLinks: responseData.items[i].volumeInfo.imageLinks,
-				isbn: responseData.items[0].volumeInfo.industryIdentifiers[0]
-					.identifier,
 			};
 		}
 
@@ -61,45 +59,37 @@ class Book {
 
 		let top_books = [responseData.results.lists[0].books.length];
 
-		console.log(responseData.results.lists[0].books[0].title);
-		console.log(responseData.results.lists[0].books[0].primary_isbn13);
-
 		for (let i = 0; i < responseData.results.lists[0].books.length; i++) {
-			let book = await Book.getBookFromGoogleAPI(
-				responseData.results.lists[0].books[i].title,
-				responseData.results.lists[0].books[i].primary_isbn13
-			);
-
-			top_books[i] = book;
+			top_books[i] = {
+				author: responseData.results.lists[0].books[i].author,
+				book_image: responseData.results.lists[0].books[i].book_image,
+				book_image_width:
+					responseData.results.lists[0].books[i].book_image_width,
+				book_image_height:
+					responseData.results.lists[0].books[i].book_image_height,
+				description: responseData.results.lists[0].books[i].description,
+				publisher: responseData.results.lists[0].books[i].publisher,
+				title: responseData.results.lists[0].books[i].title,
+				buy_links: responseData.results.lists[0].books[i].buy_links,
+			};
 		}
 
 		return top_books;
 	}
 
-	//get book from google api by passing the title and isbn from NYT api
-	static async getBookFromGoogleAPI(title, isbn) {
-		//gettiing the array of books from google api that matched the title that was passed
-		const top_sellers = await Book.getAllBooksByKeyword(title);
+	// get top seller by name
+	static async getTopSellersByName(title) {
+		const top_sellers = await Book.getTopSellers();
 
-		// variable that will hold the book we want
 		let top_seller = {};
 
-		// loop through the top_sellers array and find the book from goolge api that maches with the name and title of the top seller book from NYT api
 		for (let i = 0; i < top_sellers.length; i++) {
-			if (isbn === top_sellers[i].isbn && title === top_sellers[i].title) {
+			if (top_sellers[i].title === title) {
 				top_seller = top_sellers[i];
-				i = top_sellers.length;
 			}
 		}
 
 		return top_seller;
-	}
-
-	// get top seller info from google api by title
-	static async getTopSellerInfoByTitle(title) {
-		const top_sellers = await Book.getAllBooksByKeyword(title);
-
-		return top_sellers[0];
 	}
 }
 
