@@ -43,7 +43,7 @@ router.get("/top/sellers", async (req, res, next) => {
 router.get("/top/sellers/:title", async (req, res, next) => {
 	try {
 		const { title } = req.params;
-		top_seller = await Book.getTopSellersByName(title);
+		top_seller = await Book.getTopSellerInfoByTitle(title);
 
 		return res.status(200).json({ top_seller });
 	} catch (err) {
