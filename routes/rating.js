@@ -1,13 +1,14 @@
 const express = require("express");
-// const Book = require("../models/books");
 const router = express.Router();
+const Rating = require("../models/rating");
+const { requireAuthenticatedUser } = require("../middleware/security"); // middleware
 
 //create a new rating
-router.post("/", async (req, res, next) => {
+router.post("/", requireAuthenticatedUser, async (req, res, next) => {
 	try {
-		const { key_word, offset } = req.params;
-		books = await Book.getAllBooksByKeyword(key_word, offset);
-		return res.status(200).json({ books });
+		const { user } = req.locals;
+		const rating = await Rating.createRating({ user, rating: req.body })
+		return res.status(200).json({ rating });
 	} catch (err) {
 		next(err);
 	}
@@ -16,9 +17,7 @@ router.post("/", async (req, res, next) => {
 //list all ratings for a book
 router.get("/", async (req, res, next) => {
 	try {
-		const { key_word, offset } = req.params;
-		books = await Book.getAllBooksByKeyword(key_word, offset);
-		return res.status(200).json({ books });
+		//logic
 	} catch (err) {
 		next(err);
 	}
@@ -27,9 +26,7 @@ router.get("/", async (req, res, next) => {
 //fetch a single rating
 router.get("/:rating_id", async (req, res, next) => {
 	try {
-		const { key_word, offset } = req.params;
-		books = await Book.getAllBooksByKeyword(key_word, offset);
-		return res.status(200).json({ books });
+		//logic
 	} catch (err) {
 		next(err);
 	}
@@ -38,9 +35,7 @@ router.get("/:rating_id", async (req, res, next) => {
 // update a single rating
 router.put("/:rating_id", async (req, res, next) => {
 	try {
-		const { key_word, offset } = req.params;
-		books = await Book.getAllBooksByKeyword(key_word, offset);
-		return res.status(200).json({ books });
+		//logic
 	} catch (err) {
 		next(err);
 	}
