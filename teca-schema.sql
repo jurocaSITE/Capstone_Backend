@@ -60,7 +60,6 @@ CREATE TABLE forums (
 
 );
 
-
 CREATE TABLE posts (
     id                SERIAL PRIMARY KEY,
     forum_id          INTEGER REFERENCES forums(id) ON DELETE CASCADE,

@@ -3,10 +3,10 @@ const Book = require("../models/books");
 const router = express.Router();
 
 //get all books with specific keyword
-router.get("/:key_word", async (req, res, next) => {
+router.get("/:key_word/:offset", async (req, res, next) => {
 	try {
-		const { key_word } = req.params;
-		books = await Book.getAllBooksByKeyword(key_word);
+		const { key_word, offset } = req.params;
+		books = await Book.getAllBooksByKeyword(key_word, offset);
 
 		// console.log("ECDQWCEWCEFWCDWDEWC:", books[0]); --> how to acces each book in the books array
 
@@ -29,10 +29,9 @@ router.get("/id/:book_id", async (req, res, next) => {
 });
 
 //get top seller books
-router.get("/top/sellers", async (req, res, next) => {
+router.get("/top-sellers", async (req, res, next) => {
 	try {
 		top_sellers = await Book.getTopSellers();
-
 		return res.status(200).json({ top_sellers });
 	} catch (err) {
 		next(err);

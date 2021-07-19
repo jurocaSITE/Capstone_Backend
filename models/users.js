@@ -98,22 +98,22 @@ class User {
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Want To Read", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Want To Read", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Currently Reading", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Currently Reading", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Did Not Finish", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Did Not Finish", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Finished", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Finished", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 
 		const user = userResult.rows[0];
