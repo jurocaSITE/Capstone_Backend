@@ -3,7 +3,7 @@ const Book = require("../models/books");
 const router = express.Router();
 
 //get all books with specific keyword
-router.get("/:key_word/:offset", async (req, res, next) => {
+router.get("/search/:key_word/:offset", async (req, res, next) => {
 	try {
 		const { key_word, offset } = req.params;
 		books = await Book.getAllBooksByKeyword(key_word, offset);
@@ -39,7 +39,7 @@ router.get("/top-sellers", async (req, res, next) => {
 });
 
 //get top seller by name
-router.get("/top/sellers/:title", async (req, res, next) => {
+router.get("/top-sellers/:title", async (req, res, next) => {
 	try {
 		const { title } = req.params;
 		top_seller = await Book.getTopSellerInfoByTitle(title);
