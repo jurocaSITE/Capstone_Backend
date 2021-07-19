@@ -5,41 +5,44 @@ const { requireAuthenticatedUser } = require("../middleware/security"); // middl
 
 //create a new rating
 router.post("/", requireAuthenticatedUser, async (req, res, next) => {
-	try {
-		const { user } = req.locals;
-		const rating = await Rating.createRating({ user, rating: req.body })
-		return res.status(200).json({ rating });
-	} catch (err) {
-		next(err);
-	}
+  try {
+    const { user } = res.locals;
+    const rating = await Rating.createRating({ user, rating: req.body });
+    return res.status(200).json({ rating });
+  } catch (err) {
+    next(err);
+  }
 });
 
 //list all ratings for a book
-router.get("/", async (req, res, next) => {
-	try {
-		//logic
-	} catch (err) {
-		next(err);
-	}
+router.get("/:book_id", async (req, res, next) => {
+  try {
+    const { book_id } = req.params;
+    const ratings = await Rating.listRatingsForBook(book_id);
+    return res.status(200).json({ ratings });
+  } catch (err) {
+    next(err);
+  }
 });
 
-//fetch a single rating
-router.get("/:rating_id", async (req, res, next) => {
-	try {
-		//logic
-	} catch (err) {
-		next(err);
-	}
+//list all ratings by a user
+router.get("/user", requireAuthenticatedUser, async (req, res, next) => {
+  try {
+    const { user } = res.locals;
+    const ratings = await Rating.listRatingsByUser(user);
+    return res.status(200).json({ ratings });
+  } catch (err) {
+    next(err);
+  }
 });
 
 // update a single rating
 router.put("/:rating_id", async (req, res, next) => {
-	try {
-		//logic
-	} catch (err) {
-		next(err);
-	}
+  try {
+    //logic
+  } catch (err) {
+    next(err);
+  }
 });
-
 
 module.exports = router;

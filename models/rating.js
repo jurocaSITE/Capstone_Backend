@@ -6,7 +6,7 @@ class Rating {
         // fetch all ratings for a single book
     }
 
-    static async listRatingsByUser(user_id) {
+    static async listRatingsByUser(user) {
         // fetch all ratings created by a user
     }
 
@@ -44,7 +44,7 @@ class Rating {
             `, [rating.rating, rating.reviewBody, rating.bookId, user.email]
         )
 
-        return result.rows[0]
+        return res.rows[0]
     }
 
     static async editRating({ rating_id, rating_update }) {
