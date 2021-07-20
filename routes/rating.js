@@ -3,7 +3,7 @@ const router = express.Router();
 const Rating = require("../models/rating");
 const { requireAuthenticatedUser } = require("../middleware/security"); // middleware
 
-//create a new rating
+// create a new rating
 router.post("/", requireAuthenticatedUser, async (req, res, next) => {
   try {
     const { user } = res.locals;
@@ -14,7 +14,7 @@ router.post("/", requireAuthenticatedUser, async (req, res, next) => {
   }
 });
 
-//list all ratings for a book
+// list all ratings for a book
 router.get("/:book_id", async (req, res, next) => {
   try {
     const { book_id } = req.params;
@@ -25,7 +25,7 @@ router.get("/:book_id", async (req, res, next) => {
   }
 });
 
-//list all ratings by a user
+// list all ratings by a user
 router.get("/user", requireAuthenticatedUser, async (req, res, next) => {
   try {
     const { user } = res.locals;
