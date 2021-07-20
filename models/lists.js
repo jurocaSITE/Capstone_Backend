@@ -51,6 +51,16 @@ class List {
 		return results.rows[0];
 	}
 
+	// remove book by book id to list by list id
+	// static async removeBookById({ list_id, book_id }) {
+	// 	const results = await db.query(
+	// 		`DELETE FROM list_contents WHERE book_id=$1`, 
+	// 		[user.book_id]
+	// 	);
+
+	// 	return results.rows[0];
+	// }
+
 	// get all books in specific list
 	static async getAllBooksInListByListId(list_id) {
 		const result = await db.query(
