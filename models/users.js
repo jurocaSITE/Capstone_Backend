@@ -59,6 +59,18 @@ class User {
 				throw new BadRequestError(`Missing ${property} in request body.`);
 			}
 		});
+		if (credentials.first_name.length === 0) {
+			throw new BadRequestError("Missing first name.");
+		}
+		if (credentials.last_name.length === 0) {
+			throw new BadRequestError("Missing last name.");
+		}
+		if (credentials.username.length === 0) {
+			throw new BadRequestError("Missing username.");
+		}
+		if (credentials.password.length === 0) {
+			throw new BadRequestError("Missing password.");
+		}
 		// Make sure no user aready exists in the systme with that email
 		// if one does throw an error
 		if (credentials.email.indexOf("@") <= 0) {
@@ -98,22 +110,22 @@ class User {
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Want To Read", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Want To Read", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Currently Reading", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Currently Reading", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Did Not Finish", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Did Not Finish", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Finished", userId.rows[0].id, "DefaultImageURLHEre"]
+			["Finished", userId.rows[0].id, "DefaultImageURLHere"]
 		);
 
 		const user = userResult.rows[0];
@@ -244,6 +256,23 @@ class User {
 		const user = result.rows[0];
 
 		return user;
+	}
+
+	//delete user
+	static async deleteUser(user) {
+		//get id of user I want to delete
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const results = await db.query(
+			`
+			DELETE FROM users
+			WHERE id = $1
+			RETURNING (id, first_name, last_name, profile_picture, date_of_birth)
+			`,
+			[userId.rows[0].id]
+		);
 	}
 }
 

@@ -14,12 +14,13 @@ CREATE TABLE users (
 
 CREATE TABLE ratings_and_reviews (
     id                SERIAL PRIMARY KEY,
-    rating            INTEGER NOT NULL,
-    review_body       TEXT,
+    rating            INTEGER NOT NULL CHECK (rating > 0 AND rating <= 5),
+    review_body       TEXT, --VARCHAR(500) -- optional limiting of characters
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     book_id           TEXT NOT NULL,
     created_at        TIMESTAMP DEFAULT NOW(), 
     updated_at        TIMESTAMP DEFAULT NOW()
+    -- PRIMARY KEY       (book_id, user_id) -- making sure users can only review a book once 
 );
 
 CREATE TABLE reviews_replies (
@@ -59,7 +60,6 @@ CREATE TABLE forums (
     created_at        TIMESTAMP DEFAULT NOW()
 
 );
-
 
 CREATE TABLE posts (
     id                SERIAL PRIMARY KEY,

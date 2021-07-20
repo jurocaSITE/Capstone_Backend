@@ -35,7 +35,7 @@ router.get(
 		}
 	}
 );
-//edit a list name
+//edit a list name and cover
 //
 //delete list
 //

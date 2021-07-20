@@ -44,6 +44,21 @@ router.put(
 	}
 );
 
+// delete user profile
+router.delete(
+	"/delete-account",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const deleted_user = await User.deleteUser(user);
+			return res.status(204).json({ deleted_user });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 // set user genre interest
 router.put(
 	"/update-genre-interests",

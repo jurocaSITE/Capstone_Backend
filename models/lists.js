@@ -28,6 +28,7 @@ class List {
 		return results.rows[0];
 	}
 
+	//get all list by user id
 	static async getAllListsByUserId(user) {
 		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
 			user.email,
