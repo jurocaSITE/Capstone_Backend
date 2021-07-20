@@ -5,11 +5,12 @@ const { requireAuthenticatedUser } = require("../middleware/security"); // middl
 const { authedUserOwnsRating } = require("../middleware/permissions");
 
 // create a new rating
-router.post("/", requireAuthenticatedUser, async (req, res, next) => {
+router.post("/:book_id", requireAuthenticatedUser, async (req, res, next) => {
   try {
     const { user } = res.locals;
-    const rating = await Rating.createRating({ user, rating: req.body });
-    return res.status(200).json({ rating });
+    const { book_id } = req.params
+    const rating = await Rating.createRating({ user, book_id, rating: req.body });
+    return res.status(201).json({ rating });
   } catch (err) {
     next(err);
   }

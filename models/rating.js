@@ -62,13 +62,20 @@ class Rating {
 
   static async fetchRatingForBookByUser({ user, book_id }) {
     // fetch a user's rating for a book if it exists
+    const res = await db.query(
+        `
+            SELECT rating, review_body, user_id, book_id, created_at
+            FROM ratings_and_reviews
+            WHERE user_id = (SELECT id FROM users WHERE email = $1)
+                AND book_id = $2 
+        `, [user.email, book_id]
+    )
+
+    return res.rows[0];
   }
 
-  static async createRating({ user, rating }) {
-    // check if user has already rated the book
-    // and throw an error if they have
-    // otherwise insert new rating into db
-    const requiredFields = ["rating", "reviewBody", "bookId"];
+  static async createRating({ user, book_id, rating }) {
+    const requiredFields = ["rating", "reviewBody"];
     requiredFields.forEach((field) => {
       if (!rating.hasOwnProperty(field)) {
         throw new BadRequestError(
@@ -76,6 +83,25 @@ class Rating {
         );
       }
     });
+
+    // check if user has already rated the book
+    // and throw an error if they have
+    const existingRating = await Rating.fetchRatingForBookByUser({
+      user,
+      book_id,
+    });
+    if (existingRating) {
+        throw new BadRequestError(`Users aren't allowed to leave multiple reviews for a single book.`)
+    }
+
+    if (
+      !Number(rating.rating) ||
+      Number(rating.rating <= 0 || Number(rating.rating) > 5)
+    ) {
+      throw new BadRequestError(
+        `Invalid Rating Provided. Must be a value between 0 and 5, not including 0.`
+      );
+    }
 
     // optional check for char count (aka length) of reviewBody
     // if (rating.reviewBody.length > 500) {
@@ -93,7 +119,7 @@ class Rating {
                         created_at AS "createdAt",
                         updated_at AS "updatedAt"
             ;`,
-      [rating.rating, rating.reviewBody, rating.bookId, user.email]
+      [rating.rating, rating.reviewBody, book_id, user.email]
     );
 
     return res.rows[0];
@@ -139,7 +165,7 @@ class Rating {
     });
 
     const res = await db.query(
-        `
+      `
             UPDATE ratings_and_reviews 
             SET rating = $1,
                 review_body = $2,
@@ -151,10 +177,11 @@ class Rating {
                       user_id AS "userId",
                       created_at AS "createdAt",
                       updated_at AS "updatedAt"
-        `, [rating_update.rating, rating_update.reviewBody, rating_id]
-    )
+        `,
+      [rating_update.rating, rating_update.reviewBody, rating_id]
+    );
 
-    return res.rows[0]
+    return res.rows[0];
   }
 }
 
