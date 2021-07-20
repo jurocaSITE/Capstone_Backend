@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Rating = require("../models/rating");
 const { requireAuthenticatedUser } = require("../middleware/security"); // middleware
+const { authedUserOwnsRating } = require("../middleware/permissions");
 
 // create a new rating
 router.post("/", requireAuthenticatedUser, async (req, res, next) => {
@@ -15,7 +16,7 @@ router.post("/", requireAuthenticatedUser, async (req, res, next) => {
 });
 
 // list all ratings for a book
-router.get("/:book_id", async (req, res, next) => {
+router.get("/book/:book_id", async (req, res, next) => {
   try {
     const { book_id } = req.params;
     const ratings = await Rating.listRatingsForBook(book_id);
@@ -36,13 +37,34 @@ router.get("/user", requireAuthenticatedUser, async (req, res, next) => {
   }
 });
 
-// update a single rating
-router.put("/:rating_id", async (req, res, next) => {
+// fetch a single rating
+router.get("/:rating_id", async (req, res, next) => {
   try {
-    //logic
+    const { rating_id } = req.params;
+    const rating = await Rating.fetchRatingById(rating_id);
+    return res.status(200).json({ rating });
   } catch (err) {
     next(err);
   }
 });
+
+// update a single rating
+router.patch(
+  "/:rating_id",
+  requireAuthenticatedUser,
+  authedUserOwnsRating,
+  async (req, res, next) => {
+    try {
+      const { rating_id } = req.params;
+      const rating = await Rating.editRating({
+        rating_id,
+        rating_update: req.body,
+      });
+      return res.status(200).json({ rating });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 module.exports = router;
