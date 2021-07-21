@@ -8,6 +8,7 @@ class Rating {
       `
             SELECT  rr.id,
                     rr.rating,
+                    rr.review_title AS "reviewTitle",
                     rr.review_body AS "reviewBody",
                     rr.user_id AS "userId",
                     u.username,
@@ -37,6 +38,7 @@ class Rating {
       `
               SELECT  rr.id,
                       rr.rating,
+                      rr.review_title AS "reviewTitle",
                       rr.review_body AS "reviewBody",
                       rr.user_id AS "userId",
                       u.username,
@@ -64,7 +66,7 @@ class Rating {
     // fetch a user's rating for a book if it exists
     const res = await db.query(
         `
-            SELECT rating, review_body, user_id, book_id, created_at
+            SELECT rating, review_title, review_body, user_id, book_id, created_at
             FROM ratings_and_reviews
             WHERE user_id = (SELECT id FROM users WHERE email = $1)
                 AND book_id = $2 
@@ -75,7 +77,7 @@ class Rating {
   }
 
   static async createRating({ user, book_id, rating }) {
-    const requiredFields = ["rating", "reviewBody"];
+    const requiredFields = ["rating", "reviewTitle", "reviewBody"];
     requiredFields.forEach((field) => {
       if (!rating.hasOwnProperty(field)) {
         throw new BadRequestError(
@@ -110,16 +112,17 @@ class Rating {
 
     const res = await db.query(
       `
-            INSERT INTO ratings_and_reviews (rating, review_body, book_id, user_id)
-            VALUES ($1, $2, $3, (SELECT id FROM users WHERE email = $4))
+            INSERT INTO ratings_and_reviews (rating, review_title, review_body, book_id, user_id)
+            VALUES ($1, $2, $3, $4, (SELECT id FROM users WHERE email = $5))
             RETURNING   id,
                         rating,
+                        review_title AS "reviewTitle",
                         review_body AS "reviewBody",
                         user_id AS "userId",
                         created_at AS "createdAt",
                         updated_at AS "updatedAt"
             ;`,
-      [rating.rating, rating.reviewBody, book_id, user.email]
+      [rating.rating, rating.reviewTitle, rating.reviewBody, book_id, user.email]
     );
 
     return res.rows[0];
@@ -132,6 +135,7 @@ class Rating {
               SELECT  rr.id,
                       rr.rating,
                       rr.review_body AS "reviewBody",
+                      rr.review_title AS "reviewTitle",
                       rr.user_id AS "userId",
                       u.username,
                       u.email AS "userEmail",

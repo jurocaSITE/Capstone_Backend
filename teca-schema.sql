@@ -15,6 +15,7 @@ CREATE TABLE users (
 CREATE TABLE ratings_and_reviews (
     id                SERIAL PRIMARY KEY,
     rating            REAL NOT NULL CHECK (rating > 0 AND rating <= 5),
+    review_title      VARCHAR(150) NOT NULL,
     review_body       TEXT, --VARCHAR(500) -- optional limiting of characters
     user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     book_id           TEXT NOT NULL,
