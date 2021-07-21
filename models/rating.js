@@ -65,13 +65,14 @@ class Rating {
   static async fetchRatingForBookByUser({ user, book_id }) {
     // fetch a user's rating for a book if it exists
     const res = await db.query(
-        `
+      `
             SELECT rating, review_title, review_body, user_id, book_id, created_at
             FROM ratings_and_reviews
             WHERE user_id = (SELECT id FROM users WHERE email = $1)
                 AND book_id = $2 
-        `, [user.email, book_id]
-    )
+        `,
+      [user.email, book_id]
+    );
 
     return res.rows[0];
   }
@@ -86,6 +87,15 @@ class Rating {
       }
     });
 
+    if (
+      !Number(rating.rating) ||
+      Number(rating.rating <= 0 || Number(rating.rating) > 5)
+    ) {
+      throw new BadRequestError(
+        `Invalid Rating Provided. Must be a value between 0 and 5, not including 0.`
+      );
+    }
+
     // check if user has already rated the book
     // and throw an error if they have
     const existingRating = await Rating.fetchRatingForBookByUser({
@@ -93,15 +103,8 @@ class Rating {
       book_id,
     });
     if (existingRating) {
-        throw new BadRequestError(`Users aren't allowed to leave multiple reviews for a single book.`)
-    }
-
-    if (
-      !Number(rating.rating) ||
-      Number(rating.rating <= 0 || Number(rating.rating) > 5)
-    ) {
       throw new BadRequestError(
-        `Invalid Rating Provided. Must be a value between 0 and 5, not including 0.`
+        `Users aren't allowed to leave multiple reviews for a single book.`
       );
     }
 
@@ -122,7 +125,13 @@ class Rating {
                         created_at AS "createdAt",
                         updated_at AS "updatedAt"
             ;`,
-      [rating.rating, rating.reviewTitle, rating.reviewBody, book_id, user.email]
+      [
+        rating.rating,
+        rating.reviewTitle,
+        rating.reviewBody,
+        book_id,
+        user.email,
+      ]
     );
 
     return res.rows[0];
