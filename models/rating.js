@@ -16,7 +16,7 @@ class Rating {
                     rr.created_at AS "createdAt",
                     rr.updated_at AS "updatedAt" 
             FROM ratings_and_reviews AS rr
-                JOIN users AS u ON u.id = rr.user_id
+                LEFT JOIN users AS u ON u.id = rr.user_id
             WHERE book_id = $1
             ORDER BY rr.created_at DESC 
         ;`,

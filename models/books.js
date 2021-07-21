@@ -35,6 +35,16 @@ class Book {
     const response = await fetch(get_book_by_name_url);
     const responseData = await response.json();
 
+    const dbResponse = await db.query(
+      `
+      SELECT  AVG(rr.rating) AS "averageRating",
+              COUNT(rr.rating) AS "totalRatings"
+      FROM ratings_and_reviews AS rr
+      WHERE book_id = $1
+      GROUP BY rr.id
+      `, [responseData.id]
+    )
+
     return {
       selfLink: responseData.selfLink,
       id: responseData.id,
@@ -45,6 +55,8 @@ class Book {
       pageCount: responseData.volumeInfo.pageCount,
       categories: responseData.volumeInfo.categories,
       maturityRating: responseData.volumeInfo.maturityRating,
+      averageRating: dbResponse?.rows[0]?.averageRating,
+      totalRatings: dbResponse?.rows[0]?.totalRatings,
       imageLinks: responseData.volumeInfo.imageLinks,
     };
   }
