@@ -67,10 +67,12 @@ class Book {
       const responseData = await response.json();
 
       bookList[i] = {
+        id: responseData.id,
         title: responseData.volumeInfo.title,
         authors: responseData.volumeInfo.authors,
         pageCount: responseData.volumeInfo.pageCount,
         categories: responseData.volumeInfo.categories,
+        imageLinks: responseData.volumeInfo.imageLinks,
       };
     }
     return bookList;
