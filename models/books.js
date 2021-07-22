@@ -49,6 +49,34 @@ class Book {
     };
   }
 
+  // get all book details for books in a list by id
+  static async getBooksInList(list_id) {
+
+    const result = await db.query(
+			`SELECT book_id FROM list_contents WHERE list_id = $1`,
+			[list_id]
+		);
+    const results = result.rows
+    let bookList = [result.rows.length]; 
+
+    for (let i = 0; i < result.rows.length; i++) {
+      let book_id = results[i].book_id;
+      let get_book_by_name_url = `https://www.googleapis.com/books/v1/volumes/${book_id}`;
+
+      const response = await fetch(get_book_by_name_url);
+      const responseData = await response.json();
+
+      bookList[i] = {
+        title: responseData.volumeInfo.title,
+        authors: responseData.volumeInfo.authors,
+        pageCount: responseData.volumeInfo.pageCount,
+        categories: responseData.volumeInfo.categories,
+      };
+    }
+    return bookList;
+
+  }
+
   //get top seller books
   static async getTopSellers() {
     const get_top_sellers_url = `https://api.nytimes.com/svc/books/v3/lists/overview.json?api-key=${process.env.NYT_API_KEY}`;
@@ -57,7 +85,6 @@ class Book {
     const responseData = await response.json();
 
     let top_books = [responseData.results.lists[0].books.length];
-
     for (let i = 0; i < responseData.results.lists[0].books.length; i++) {
       top_books[i] = {
         author: responseData.results.lists[0].books[i].author,

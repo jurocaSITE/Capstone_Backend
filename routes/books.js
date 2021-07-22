@@ -28,6 +28,17 @@ router.get("/id/:book_id", async (req, res, next) => {
 	}
 });
 
+//get all book details for books in a list by id
+router.get("/my-lists/:list_id", async (req, res, next) => {
+	try {
+		const { list_id } = req.params;
+		books_in_list = await Book.getBooksInList(list_id);
+		return res.status(200).json({ books_in_list });
+	} catch (err) {
+		next(err);
+	}
+});
+
 //get top seller books
 router.get("/top-sellers", async (req, res, next) => {
 	try {
