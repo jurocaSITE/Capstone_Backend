@@ -96,6 +96,18 @@ class Rating {
       );
     }
 
+    if (rating.reviewTitle.length < 1) {
+      throw new BadRequestError(
+        `Required field -- reviewTitle -- cannot be empty`
+      );
+    }
+
+    if (rating.reviewBody.length < 1) {
+      throw new BadRequestError(
+        `Required field -- reviewBody -- cannot be empty`
+      );
+    }
+
     // check if user has already rated the book
     // and throw an error if they have
     const existingRating = await Rating.fetchRatingForBookByUser({
@@ -169,6 +181,8 @@ class Rating {
 
   static async editRating({ rating_id, rating_update }) {
     // edit a single rating
+
+    // error handling
     const requiredFields = ["rating", "reviewTitle", "reviewBody"];
     requiredFields.forEach((field) => {
       if (!rating_update.hasOwnProperty(field)) {
@@ -178,6 +192,28 @@ class Rating {
       }
     });
 
+    if (
+      !Number(rating_update.rating) ||
+      Number(rating_update.rating <= 0 || Number(rating_update.rating) > 5)
+    ) {
+      throw new BadRequestError(
+        `Invalid Rating Provided. Must be a value between 0 and 5, not including 0.`
+      );
+    }
+
+    if (rating_update.reviewTitle.length < 1) {
+      throw new BadRequestError(
+        `Required field -- reviewTitle -- cannot be empty`
+      );
+    }
+
+    if (rating_update.reviewBody.length < 1) {
+      throw new BadRequestError(
+        `Required field -- reviewBody -- cannot be empty`
+      );
+    }
+
+    // query db
     const res = await db.query(
       `
             UPDATE ratings_and_reviews 
@@ -195,10 +231,36 @@ class Rating {
                       created_at AS "createdAt",
                       updated_at AS "updatedAt"
         `,
-      [rating_update.rating, rating_update.reviewTitle, rating_update.reviewBody, rating_id]
+      [
+        rating_update.rating,
+        rating_update.reviewTitle,
+        rating_update.reviewBody,
+        rating_id,
+      ]
     );
 
     return res.rows[0];
+  }
+
+  static async deleteRating(rating_id) {
+    // delete a single rating
+
+    const res = await db.query(
+      `
+        DELETE FROM ratings_and_reviews
+        WHERE id = $1
+        RETURNING id,
+                  rating,
+                  review_title AS "reviewTitle",
+                  review_body AS "reviewBody",
+                  user_id AS "userId",
+                  book_id AS "bookId",
+                  created_at AS "createdAt",
+                  updated_at AS "updatedAt"
+      `, [rating_id]
+    )
+
+    return res.rows[0]
   }
 }
 
