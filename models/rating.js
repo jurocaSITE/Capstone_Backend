@@ -122,6 +122,7 @@ class Rating {
                         review_title AS "reviewTitle",
                         review_body AS "reviewBody",
                         user_id AS "userId",
+                        book_id AS "bookId",
                         created_at AS "createdAt",
                         updated_at AS "updatedAt"
             ;`,
@@ -168,7 +169,7 @@ class Rating {
 
   static async editRating({ rating_id, rating_update }) {
     // edit a single rating
-    const requiredFields = ["rating", "reviewBody"];
+    const requiredFields = ["rating", "reviewTitle", "reviewBody"];
     requiredFields.forEach((field) => {
       if (!rating_update.hasOwnProperty(field)) {
         throw new BadRequestError(
@@ -181,17 +182,20 @@ class Rating {
       `
             UPDATE ratings_and_reviews 
             SET rating = $1,
-                review_body = $2,
+                review_title = $2,
+                review_body = $3,
                 updated_at = NOW()
-            WHERE id = $3
+            WHERE id = $4
             RETURNING id,
                       rating,
+                      review_title AS "reviewTitle",
                       review_body AS "reviewBody",
                       user_id AS "userId",
+                      book_id AS "bookId",
                       created_at AS "createdAt",
                       updated_at AS "updatedAt"
         `,
-      [rating_update.rating, rating_update.reviewBody, rating_id]
+      [rating_update.rating, rating_update.reviewTitle, rating_update.reviewBody, rating_id]
     );
 
     return res.rows[0];

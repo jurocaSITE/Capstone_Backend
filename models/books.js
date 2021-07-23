@@ -34,17 +34,18 @@ class Book {
 
     const response = await fetch(get_book_by_name_url);
     const responseData = await response.json();
+    console.log("Search By Id return...", responseData)
 
     const dbResponse = await db.query(
       `
-      SELECT  AVG(rr.rating) AS "averageRating",
-              COUNT(rr.rating) AS "totalRatings"
-      FROM ratings_and_reviews AS rr
-      WHERE book_id = $1
-      GROUP BY rr.id
-      `, [responseData.id]
+      SELECT  AVG(rating) AS "averageRating",
+              COUNT(rating) AS "totalRatings"
+      FROM ratings_and_reviews
+      GROUP BY book_id
+      HAVING book_id = $1
+      ;`, [responseData.id]
     )
-
+      
     return {
       selfLink: responseData.selfLink,
       id: responseData.id,
