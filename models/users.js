@@ -110,22 +110,38 @@ class User {
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Want To Read", userId.rows[0].id, "DefaultImageURLHere"]
+			[
+				"Want To Read",
+				userId.rows[0].id,
+				"https://images.unsplash.com/photo-1521056787327-165dc2a32836?ixid=MnwxMjA3fDB8MHxzZWFyY2h8N3x8d2FudCUyMHRvJTIwcmVhZHxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+			]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Currently Reading", userId.rows[0].id, "DefaultImageURLHere"]
+			[
+				"Currently Reading",
+				userId.rows[0].id,
+				"https://images.unsplash.com/photo-1474366521946-c3d4b507abf2?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fGN1cnJlbnRseSUyMHJlYWRpbmd8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+			]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Did Not Finish", userId.rows[0].id, "DefaultImageURLHere"]
+			[
+				"Did Not Finish",
+				userId.rows[0].id,
+				"https://images.unsplash.com/photo-1551818567-d49550a81408?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NXx8Ym9yZWR8ZW58MHx8MHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+			]
 		);
 		await db.query(
 			`INSERT INTO lists (list_name, user_id, image ) VALUES ($1, $2, $3) RETURNING list_name, user_id, image;
 			`,
-			["Finished", userId.rows[0].id, "DefaultImageURLHere"]
+			[
+				"Finished",
+				userId.rows[0].id,
+				"https://images.unsplash.com/photo-1488994038434-e995b7a4ba35?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NTF8fGZpbmlzaGVkJTIwYm9va3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60",
+			]
 		);
 
 		const user = userResult.rows[0];

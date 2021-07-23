@@ -36,8 +36,37 @@ router.get(
 	}
 );
 //edit a list name and cover
-//
+router.put(
+	"/edit/:list_id",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { list_id } = req.params;
+			const edit_list = await List.editList({
+				list_id,
+				new_list_info: req.body,
+			});
+			return res.status(204).json({ edit_list });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 //delete list
+router.delete(
+	"/delete/:list_id",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { list_id } = req.params;
+			const deleted_list = await List.deleteList(list_id);
+			return res.status(204).json({ deleted_list });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
 //
 // add book to list
 router.post(
