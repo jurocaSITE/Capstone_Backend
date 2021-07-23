@@ -2,7 +2,7 @@ CREATE TABLE users (
     id                SERIAL PRIMARY KEY,
     first_name        VARCHAR(50) NOT NULL,
     last_name         VARCHAR(50) NOT NULL,
-    username          VARCHAR(50) NOT NULL, --Do we ant to make it unique?
+    username          VARCHAR(50) NOT NULL UNIQUE, 
     password          TEXT NOT NULL,
     email             TEXT NOT NULL UNIQUE CHECK (POSITION('@' IN email) > 1),
     profile_picture   TEXT,

@@ -45,7 +45,7 @@ class User {
 	}
 
 	static async register(credentials) {
-		// user should submit their first_name, last_name, email, password
+		// user should submit their first_name, last_name, username, email, password
 		// if any of these fields are missing throw an error
 		const requiredFields = [
 			"first_name",
@@ -92,7 +92,7 @@ class User {
 		// create a new user in the db with all their info
 		// return the user
 		const userResult = await db.query(
-			`INSERT INTO users (first_name, last_name, username, password,email) VALUES ($1, $2, $3, $4, $5) RETURNING first_name, last_name, username, password, email;`,
+			`INSERT INTO users (first_name, last_name, username, password, email) VALUES ($1, $2, $3, $4, $5) RETURNING first_name, last_name, username, password, email;`,
 			[
 				credentials.first_name,
 				credentials.last_name,

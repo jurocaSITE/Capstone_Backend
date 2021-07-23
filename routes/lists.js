@@ -35,6 +35,20 @@ router.get(
 		}
 	}
 );
+
+// get list name by list id
+router.get(
+	"/get-list-name/:list_id",
+	async (req, res, next) => {
+		try {
+			const { list_id } = req.params;
+			const list_name = await List.getListNameById(list_id);
+			return res.status(200).json( list_name );
+		} catch (err) {
+			next(err);
+		}
+	}
+);
 //edit a list name and cover
 router.put(
 	"/edit/:list_id",
@@ -83,21 +97,24 @@ router.post(
 		}
 	}
 );
+
 // delete books from lists
-//
-//get all books from specific list
+//CODE HERE
+
+//get list contents from specific list
 router.get(
 	"/:list_id/books",
 	security.requireAuthenticatedUser,
 	async (req, res, next) => {
 		try {
 			const { list_id } = req.params;
-			const all_lists = await List.getAllBooksInListByListId(list_id);
-			return res.status(200).json({ all_lists });
+			const list_contents = await List.getListContents(list_id);
+			return res.status(200).json({ list_contents });
 		} catch (err) {
 			next(err);
 		}
 	}
 );
+
 
 module.exports = router;

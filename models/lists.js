@@ -96,8 +96,18 @@ class List {
 		return results.rows[0];
 	}
 
-	// get all books in specific list
-	static async getAllBooksInListByListId(list_id) {
+	// remove book by book id to list by list id
+	// static async removeBookById({ list_id, book_id }) {
+	// 	const results = await db.query(
+	// 		`DELETE FROM list_contents WHERE book_id=$1`,
+	// 		[user.book_id]
+	// 	);
+
+	// 	return results.rows[0];
+	// }
+
+	// get list contents of specific list
+	static async getListContents(list_id) {
 		const result = await db.query(
 			`SELECT * FROM list_contents WHERE list_id = $1`,
 			[list_id]
@@ -116,6 +126,14 @@ class List {
 			`,
 			[list_id]
 		);
+	}
+	// get list name by list contents id
+	static async getListNameById(list_id) {
+		const result = await db.query(`SELECT list_name FROM lists WHERE id = $1`, [
+			list_id,
+		]);
+
+		return result.rows[0];
 	}
 }
 
