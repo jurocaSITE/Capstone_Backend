@@ -85,6 +85,20 @@ class List {
 		return result.rows;
 	}
 
+	//get currently reading list by user id
+	static async getCurrentlyReadingListByUserId(user) {
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const result = await db.query(
+			`SELECT * FROM lists WHERE user_id = $1 AND list_name = $2 ORDER BY created_at ASC`,
+			[userId.rows[0].id, 'Currently Reading']
+		);
+
+		return result.rows[0];
+	}
+
 	// add book by book id to list by list id
 	static async addBookById({ list_id, book_id }) {
 		const results = await db.query(

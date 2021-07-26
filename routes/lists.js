@@ -36,6 +36,21 @@ router.get(
 	}
 );
 
+//get currently reading list by user id
+	router.get(
+		"/get-currently-reading",
+		security.requireAuthenticatedUser,
+		async (req, res, next) => {
+			try {
+				const { user } = res.locals;
+				const currently_reading = await List.getCurrentlyReadingListByUserId(user);
+				return res.status(200).json({ currently_reading });
+			} catch (err) {
+				next(err);
+			}
+		}
+	);
+
 // get list name by list id
 router.get(
 	"/get-list-name/:list_id",
