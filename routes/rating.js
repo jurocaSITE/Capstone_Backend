@@ -68,4 +68,20 @@ router.patch(
   }
 );
 
+// delete a single rating
+router.delete(
+  "/:rating_id",
+  requireAuthenticatedUser,
+  authedUserOwnsRating,
+  async (req, res, next) => {
+    try {
+      const { rating_id } = req.params;
+      const rating = await Rating.deleteRating( rating_id );
+      return res.status(201).json({ rating });
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 module.exports = router;
