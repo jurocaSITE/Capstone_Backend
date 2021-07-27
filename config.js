@@ -6,6 +6,11 @@ const SECRET_KEY = process.env.SECRET_KEY || "secret_dev";
 
 const IS_TESTING = process.env.NODE_ENV === "test";
 
+const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
+const EMAIL_SERVICE_ACTIVE = IS_TESTING
+	? false
+	: process.env.EMAIL_SERVICE_STATUS == "active";
+
 function getDatabaseUri() {
 	const dbUser = process.env.DATABASE_USER || "postgres";
 	const dbPass = process.env.DATABASE_PASS
@@ -28,16 +33,20 @@ const BCRYPT_WORK_FACTOR = IS_TESTING ? 4 : 13;
 
 console.log("Auth Starter Config:".red);
 console.log("PORT:".blue, PORT);
-console.log("SECRET_KEY:".blue, SECRET_KEY);
+// console.log("SECRET_KEY:".blue, SECRET_KEY);
 console.log("IS_TESTING:".blue, IS_TESTING);
+// console.log("SENDGRID_API_KEY:".blue, SENDGRID_API_KEY);
+console.log("EMAIL_SERVICE_ACTIVE:".blue, EMAIL_SERVICE_ACTIVE);
 console.log("BCRYPT_WORK_FACTOR".blue, BCRYPT_WORK_FACTOR);
 console.log("Database:".blue, getDatabaseUri());
 console.log("---");
 
 module.exports = {
 	PORT,
-	SECRET_KEY,
+	// SECRET_KEY,
 	IS_TESTING,
 	BCRYPT_WORK_FACTOR,
+	// SENDGRID_API_KEY,
+	EMAIL_SERVICE_ACTIVE,
 	getDatabaseUri,
 };

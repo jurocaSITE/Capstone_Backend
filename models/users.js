@@ -288,38 +288,15 @@ class User {
 	}
 
 	// forgot password
-	static async forgotPassword(email) {
-		console.log(email.email.email);
-		// genereate a random string
-		const passwordResetCode = uuid();
-		console.log(passwordResetCode);
-		// checks the user exists in the database
-		const existingUser = await User.fetchUserByEmail(email.email.email);
-		if (!existingUser) {
-			throw new BadRequestError(
-				`No user exists with email: ${email.email.email}`
-			);
-		}
-
-		try {
-			await sendEmail({
-				to: email.email.email,
-				from: "camilailiberg@gmail.com",
-				subject: "Password Reset",
-				text: `To reset your password, click this link: http://localhost:3000/reset-password/${passwordResetCode}`,
-			});
-		} catch (err) {
-			next(err);
-		}
-
-		return;
+	static async forgotPassword() {
+		//
 	}
+	//change username
 	//
 	// change email
 	//
-	//change password
+	//change password when user is login
 	//
-	//change username
 }
 
 module.exports = User;

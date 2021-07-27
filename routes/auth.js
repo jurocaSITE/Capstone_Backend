@@ -115,8 +115,7 @@ router.put(
 // forgot password
 router.put("/forgot-password", async (req, res, next) => {
 	try {
-		await User.forgotPassword({ email: req.body });
-
+		await User.forgotPassword();
 		return res.status(200);
 	} catch (err) {
 		next(err);
