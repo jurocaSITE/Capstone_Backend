@@ -112,6 +112,17 @@ router.put(
 	}
 );
 
+// forgot password
+router.put("/forgot-password", async (req, res, next) => {
+	try {
+		await User.forgotPassword({ email: req.body });
+
+		return res.status(200);
+	} catch (err) {
+		next(err);
+	}
+});
+
 // I wan to take the token that was sent in this request and I want to turn it into a user in our data base, who can be then sent back to the client with all their information
 router.get("/me", security.requireAuthenticatedUser, async (req, res, next) => {
 	try {
