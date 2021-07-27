@@ -1,5 +1,5 @@
 // create a single instance of the email service that we'll export for use across our application
-
+const { SENDGRID_API_KEY, EMAIL_SERVICE_ACTIVE } = require("../config");
 const EmailService = require("./email");
 
 const emailService = new EmailService({
