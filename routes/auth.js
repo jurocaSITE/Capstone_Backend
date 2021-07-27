@@ -71,7 +71,7 @@ router.put(
 				user_genre_interests: req.body,
 			});
 
-			return res.status(204).json({ genre_interests });
+			return res.status(201).json({ genre_interests });
 		} catch (err) {
 			next(err);
 		}

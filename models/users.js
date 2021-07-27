@@ -192,11 +192,11 @@ class User {
 
 	//set user's genre interests
 	static async updateUserGenreInterests({ user, user_genre_interests }) {
-		const requiredFields = ["genre_interest"];
+		const requiredFields = ["genre_interests"];
 		requiredFields.forEach((field) => {
 			if (!user_genre_interests.hasOwnProperty(field)) {
 				throw new BadRequestError(
-					`Required field -${field} - missing from request body.`
+					`Required field - ${field} - missing from request body.`
 				);
 			}
 		});
@@ -212,7 +212,7 @@ class User {
 				WHERE id = $2
 				RETURNING genre_interest;
 			`,
-			[user_genre_interests.genre_interest, userId.rows[0].id]
+			[user_genre_interests.genre_interests, userId.rows[0].id]
 		);
 
 		return results.rows[0];
