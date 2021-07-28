@@ -1,15 +1,17 @@
 CREATE TABLE users (
-    id                SERIAL PRIMARY KEY,
-    first_name        VARCHAR(50) NOT NULL,
-    last_name         VARCHAR(50) NOT NULL,
-    username          VARCHAR(50) NOT NULL UNIQUE, 
-    password          TEXT NOT NULL,
-    email             TEXT NOT NULL UNIQUE CHECK (POSITION('@' IN email) > 1),
-    profile_picture   TEXT,
-    date_of_birth     TIMESTAMP,
-    goal              INTEGER,
-    genre_interest    TEXT[],
-    created_at        TIMESTAMP DEFAULT NOW()
+    id                 SERIAL PRIMARY KEY,
+    first_name         VARCHAR(50) NOT NULL,
+    last_name          VARCHAR(50) NOT NULL,
+    username           VARCHAR(50) NOT NULL UNIQUE, 
+    password           TEXT NOT NULL,
+    email              TEXT NOT NULL UNIQUE CHECK (POSITION('@' IN email) > 1),
+    profile_picture    TEXT,
+    date_of_birth      TIMESTAMP,
+    goal               INTEGER,
+    genre_interest     TEXT[],
+    pw_reset_token     TEXT,
+    pw_reset_token_exp TIMESTAMP,
+    created_at         TIMESTAMP DEFAULT NOW()
 );
 
 CREATE TABLE ratings_and_reviews (

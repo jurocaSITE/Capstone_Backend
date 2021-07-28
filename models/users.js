@@ -287,6 +287,23 @@ class User {
 		);
 	}
 
+	//save password reset token
+	static async savePasswordResetToken(email, resetToken) {
+		const result = await db.query(
+			`
+			UPDATE users
+			SET pw_reset_token     = $1,
+				pw_reset_token_exp = $2
+			WHERE email = $3
+			RETURNING id, first_name, last_name, username, email profile_picture, date_of_birth, goal, genre_interest, created_at;
+			`,
+			[resetToken.token, resetToken.expiresAt, email]
+		);
+
+		const user = result.rows[0];
+		if (user) return User.makePublicUser(user);
+	}
+
 	// forgot password
 	static async forgotPassword() {
 		//
