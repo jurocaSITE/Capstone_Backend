@@ -304,6 +304,30 @@ class User {
 		if (user) return User.makePublicUser(user);
 	}
 
+	// reset password
+	static async resetPassword(token, newPassword) {
+		const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_WORK_FACTOR);
+
+		const result = await db.query(
+			`
+			UPDATE users
+			SET password           = $1,
+				pw_reset_token     = NULL,
+				pw_reset_token_exp = NULL
+			WHERE pw_reset_token = $2
+				AND pw_reset_token_exp > NOW()
+			RETURNING id, first_name, last_name, username, email profile_picture, date_of_birth, goal, genre_interest, created_at;
+			`,
+			[hashedPassword, token]
+		);
+
+		const user = result.rows[0];
+
+		if (user) return User.makePublicUser(user);
+
+		throw new BadRequestError("That token is either expired or invalid");
+	}
+
 	// forgot password
 	static async forgotPassword() {
 		//
