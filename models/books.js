@@ -10,8 +10,20 @@ class Book {
 		const responseData = await response.json();
 
 		let booksReturned = [responseData.items.length];
-
 		for (let i = 0; i < responseData.items.length; i++) {
+      // query the SQL database for every book returned by the google API
+      // to get the ratings
+      const dbResponse = await db.query(
+        `
+        SELECT  AVG(rating) AS "averageRating",
+                COUNT(rating) AS "totalRatings"
+        FROM ratings_and_reviews
+        GROUP BY book_id
+        HAVING book_id = $1
+        ;`,
+        [responseData.items[i].id]
+      );
+
 			booksReturned[i] = {
 				selfLink: responseData.items[i].selfLink,
 				id: responseData.items[i].id,
@@ -19,6 +31,8 @@ class Book {
 				authors: responseData.items[i].volumeInfo.authors,
 				publishedDate: responseData.items[i].volumeInfo.publishedDate,
 				description: responseData.items[i].volumeInfo.description,
+        averageRating: dbResponse?.rows[0]?.averageRating,
+        totalRatings: dbResponse?.rows[0]?.totalRatings,
 				pageCount: responseData.items[i].volumeInfo.pageCount,
 				categories: responseData.items[i].volumeInfo.categories,
 				maturityRating: responseData.items[i].volumeInfo.maturityRating,
@@ -34,7 +48,6 @@ class Book {
 
 		const response = await fetch(get_book_by_name_url);
 		const responseData = await response.json();
-		console.log("Search By Id return...", responseData);
 
 		const dbResponse = await db.query(
 			`
