@@ -5,7 +5,8 @@ class EmailService {
 	//we are just setting up nodemailer to be able to send emails. And the transport variable is what we will be using to send all our emails
 	constructor(config) {
 		//initialize
-		const { isActive, apiKey } = config;
+		const { isActive, apiKey, clientUrl, emailFromAddress, applicationName } =
+			config;
 
 		// we pass the previos apiKey to the nodemailerSendgrid configuration object, which will create our configuration for the nodemailer.createTransoprt method
 
@@ -16,6 +17,9 @@ class EmailService {
 		// this is so that we keep this store on every instance of the email service class
 		this.transport = transport;
 		this.isActive = isActive;
+		this.clientUrl = clientUrl;
+		this.emailFromAddress = emailFromAddress;
+		this.applicationName = applicationName;
 	}
 
 	async sendEmail(email) {
@@ -48,12 +52,55 @@ class EmailService {
 		}
 	}
 
-	async sendPasswordResetEmail() {
-		// complete me
+	constructPasswordResetUrl(token) {
+		return `${this.clientUrl}/password-reset?token=${token}`;
 	}
 
-	async sendPasswordResetConfirmationEmail() {
-		// complete me
+	async sendPasswordResetEmail(user, token) {
+		const resetPAsswordUrl = this.constructPasswordResetUrl(token);
+
+		const email = {
+			to: user.email,
+			from: this.emailFromAddress,
+			subject: `Reset you password for ${this.applicationName}`,
+			html: `
+			<html>
+				<body>
+					<h1>Password Reset Notification</h1>
+					<br />
+					<p>You are receiving this email because you made a request to reset the password fro your account.</p>
+					<br />
+					<p>Click on the link below to finish the password reset process</p>
+					<a href="${resetPAsswordUrl}">${resetPAsswordUrl}</a>
+					<br />
+					<p>If you did not make this request contact support inmediately</p>
+				</body>
+			</html>
+			`,
+		};
+
+		return await this.sendEmail(email);
+	}
+
+	async sendPasswordResetConfirmationEmail(user) {
+		const email = {
+			to: user.email,
+			from: this.emailFromAddress,
+			subject: `Your ${this.applicationName} password has been reset successfully.`,
+			html: `
+			<html>
+				<body>
+					<h1>Password Reset Notification</h1>
+					<br />
+					<p>This is a confirmation of a successful password reset for your account.</p>
+					<br />
+					<p>If you did not reset your password contact support inmediately</p>
+				</body>
+			</html>
+			`,
+		};
+
+		return await this.sendEmail(email);
 	}
 }
 

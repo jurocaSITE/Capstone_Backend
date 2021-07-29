@@ -1,15 +1,20 @@
 require("dotenv").config();
 require("colors");
 
+const APPLICATION_NAME = "Teca";
+
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3001;
 const SECRET_KEY = process.env.SECRET_KEY || "secret_dev";
 
 const IS_TESTING = process.env.NODE_ENV === "test";
 
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost3000";
+
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const EMAIL_SERVICE_ACTIVE = IS_TESTING
 	? false
 	: process.env.EMAIL_SERVICE_STATUS == "active";
+const EMAIL_FROM_ADDRESS = process.env.EMAIL_FROM_ADDRESS;
 
 function getDatabaseUri() {
 	const dbUser = process.env.DATABASE_USER || "postgres";
@@ -31,11 +36,13 @@ function getDatabaseUri() {
 // Speed up bcrypt for tests when security isn't important
 const BCRYPT_WORK_FACTOR = IS_TESTING ? 4 : 13;
 
-console.log("Auth Starter Config:".red);
+console.log(`${APPLICATION_NAME} Config`.red);
 console.log("PORT:".blue, PORT);
 console.log("SECRET_KEY:".blue, SECRET_KEY);
 console.log("IS_TESTING:".blue, IS_TESTING);
+console.log("CLIENT_URL:".blue, CLIENT_URL);
 console.log("SENDGRID_API_KEY:".blue, SENDGRID_API_KEY);
+console.log("EMAIL_FROM_ADDRESS:".blue, EMAIL_FROM_ADDRESS);
 console.log("EMAIL_SERVICE_ACTIVE:".blue, EMAIL_SERVICE_ACTIVE);
 console.log("BCRYPT_WORK_FACTOR".blue, BCRYPT_WORK_FACTOR);
 console.log("Database:".blue, getDatabaseUri());
@@ -47,6 +54,9 @@ module.exports = {
 	IS_TESTING,
 	BCRYPT_WORK_FACTOR,
 	SENDGRID_API_KEY,
+	EMAIL_FROM_ADDRESS,
+	APPLICATION_NAME,
+	CLIENT_URL,
 	EMAIL_SERVICE_ACTIVE,
 	getDatabaseUri,
 };
