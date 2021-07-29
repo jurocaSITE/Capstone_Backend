@@ -1,7 +1,11 @@
 const express = require("express");
 const User = require("../models/users");
-const { createUserJwt } = require("../utils/tokens"); //utility function to generate json we tokens
+const {
+	createUserJwt,
+	generatePasswordResetToken,
+} = require("../utils/tokens"); //utility function to generate json we tokens
 const security = require("../middleware/security"); // middleware
+const { emailService } = require("../services");
 const router = express.Router();
 
 //login
@@ -113,15 +117,53 @@ router.put(
 );
 
 // forgot password
-router.put("/forgot-password", async (req, res, next) => {
+// router.put("/forgot-password", async (req, res, next) => {
+// 	try {
+// 		await User.forgotPassword();
+// 		return res.status(200);
+// 	} catch (err) {
+// 		next(err);
+// 	}
+// });
+
+// recover
+router.post("/recover", async (req, res, next) => {
 	try {
-		await User.forgotPassword();
-		return res.status(200);
-	} catch (err) {
-		next(err);
+		const { email } = req.body;
+		const token = generatePasswordResetToken();
+		const user = await User.savePasswordResetToken(email, token);
+
+		if (user) {
+			await emailService.sendPasswordResetEmail(user, token);
+		}
+
+		return res.status(200).json({
+			message: `If your account exists in our system, you should receive an email shortly.`,
+		});
+	} catch (error) {
+		next(error);
 	}
 });
 
+//password reset
+router.post("/password-reset", async (req, res, next) => {
+	try {
+		const { token } = req.query;
+		const { email } = req.body;
+
+		const user = await User.resetPassword(token, newPassword);
+
+		if (user) {
+			await emailService.sendPasswordResetConfirmationEmail(user);
+		}
+
+		return res.status(200).json({
+			message: `Password successfully reset.`,
+		});
+	} catch (error) {
+		next(error);
+	}
+});
 // I wan to take the token that was sent in this request and I want to turn it into a user in our data base, who can be then sent back to the client with all their information
 router.get("/me", security.requireAuthenticatedUser, async (req, res, next) => {
 	try {

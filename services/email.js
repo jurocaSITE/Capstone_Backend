@@ -47,6 +47,14 @@ class EmailService {
 			return { status: 400, email, error: errors || [err] };
 		}
 	}
+
+	async sendPasswordResetEmail() {
+		// complete me
+	}
+
+	async sendPasswordResetConfirmationEmail() {
+		// complete me
+	}
 }
 
 module.exports = EmailService;
