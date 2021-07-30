@@ -43,8 +43,8 @@ class EmailService {
 			if (status === 202) return { status, email, error: null };
 
 			return { status, email, error: res?.[0]?.body };
-		} catch (error) {
-			console.error(`Errors with email occured: ${String(error)}`);
+		} catch (err) {
+			console.error(`Errors with email occured: ${String(err)}`);
 
 			const errors = err?.response?.body?.errors;
 
@@ -58,7 +58,7 @@ class EmailService {
 
 	async sendPasswordResetEmail(user, token) {
 		const resetPAsswordUrl = this.constructPasswordResetUrl(token);
-
+		console.log("FROM BACKEND email.js TOKEN: ", token);
 		const email = {
 			to: user.email,
 			from: this.emailFromAddress,

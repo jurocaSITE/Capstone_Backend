@@ -116,22 +116,12 @@ router.put(
 	}
 );
 
-// forgot password
-// router.put("/forgot-password", async (req, res, next) => {
-// 	try {
-// 		await User.forgotPassword();
-// 		return res.status(200);
-// 	} catch (err) {
-// 		next(err);
-// 	}
-// });
-
 // recover
 router.post("/recover", async (req, res, next) => {
 	try {
-		const { email } = req.body;
+		const { em } = req.body;
 		const token = generatePasswordResetToken();
-		const user = await User.savePasswordResetToken(email, token);
+		const user = await User.savePasswordResetToken(em, token);
 
 		if (user) {
 			await emailService.sendPasswordResetEmail(user, token);

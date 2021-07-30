@@ -295,7 +295,7 @@ class User {
 			SET pw_reset_token     = $1,
 				pw_reset_token_exp = $2
 			WHERE email = $3
-			RETURNING id, first_name, last_name, username, email profile_picture, date_of_birth, goal, genre_interest, created_at;
+			RETURNING id, first_name, last_name, username, email, profile_picture, date_of_birth, goal, genre_interest, created_at;
 			`,
 			[resetToken.token, resetToken.expiresAt, email]
 		);
@@ -328,10 +328,6 @@ class User {
 		throw new BadRequestError("That token is either expired or invalid");
 	}
 
-	// forgot password
-	static async forgotPassword() {
-		//
-	}
 	//change username
 	//
 	// change email
