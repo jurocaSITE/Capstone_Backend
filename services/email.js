@@ -53,12 +53,11 @@ class EmailService {
 	}
 
 	constructPasswordResetUrl(token) {
-		return `${this.clientUrl}/password-reset?token=${token}`;
+		return `${this.clientUrl}/password-reset?token=${token.token}`;
 	}
 
 	async sendPasswordResetEmail(user, token) {
 		const resetPAsswordUrl = this.constructPasswordResetUrl(token);
-		console.log("FROM BACKEND email.js TOKEN: ", token);
 		const email = {
 			to: user.email,
 			from: this.emailFromAddress,
