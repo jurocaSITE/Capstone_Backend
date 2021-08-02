@@ -256,6 +256,7 @@ class User {
 		return results.rows[0];
 	}
 
+	// fetch user by email
 	static async fetchUserByEmail(email) {
 		if (!email) {
 			throw new BadRequestError("No email provided");
@@ -268,6 +269,162 @@ class User {
 		const user = result.rows[0];
 
 		return user;
+	}
+
+	//change username
+	static async changeUsername({ user, username, password }) {
+		const requiredFields = ["username", "password"];
+		requiredFields.forEach((field) => {
+			if (!username.hasOwnProperty(field)) {
+				throw new BadRequestError(
+					`Required field -${field} - missing from request body.`
+				);
+			}
+		});
+		if (username.username.length === 0) {
+			throw new BadRequestError("Missing username.");
+		}
+		if (password.password.length === 0) {
+			throw new BadRequestError("Missing password.");
+		}
+
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const user_password = await db.query(
+			`SELECT password FROM users WHERE email = $1`,
+			[user.email]
+		);
+
+		const isValid = await bcrypt.compare(
+			password.password,
+			user_password.rows[0].password
+		);
+
+		if (isValid) {
+			const results = await db.query(
+				`
+					UPDATE users
+					SET username = $1
+					WHERE id = $2
+					RETURNING username;
+				`,
+				[username.username, userId.rows[0].id]
+			);
+
+			return results.rows[0];
+		}
+
+		throw new UnauthorizedError(
+			"The password you entered does not match your current password"
+		);
+	}
+
+	//change email
+	static async changeEmail({ user, email, password }) {
+		console.log(user);
+		const requiredFields = ["email", "password"];
+		requiredFields.forEach((field) => {
+			if (!email.hasOwnProperty(field)) {
+				throw new BadRequestError(
+					`Required field -${field} - missing from request body.`
+				);
+			}
+		});
+		if (email.email.length === 0) {
+			throw new BadRequestError("Missing email.");
+		}
+		if (password.password.length === 0) {
+			throw new BadRequestError("Missing password.");
+		}
+
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const user_password = await db.query(
+			`SELECT password FROM users WHERE email = $1`,
+			[user.email]
+		);
+
+		const isValid = await bcrypt.compare(
+			password.password,
+			user_password.rows[0].password
+		);
+
+		if (isValid) {
+			const results = await db.query(
+				`
+					UPDATE users
+					SET email = $1
+					WHERE id = $2
+					RETURNING email;
+				`,
+				[email.email, userId.rows[0].id]
+			);
+
+			return results.rows[0];
+		}
+
+		throw new UnauthorizedError(
+			"The password you entered does not match your current password"
+		);
+	}
+
+	//change password when user is logged in
+	static async changePassword({ user, updated_password, current_password }) {
+		console.log(user);
+		const requiredFields = ["current_password", "updated_password"];
+		requiredFields.forEach((field) => {
+			if (!current_password.hasOwnProperty(field)) {
+				throw new BadRequestError(
+					`Required field -${field} - missing from request body.`
+				);
+			}
+		});
+		if (updated_password.updated_password.length === 0) {
+			throw new BadRequestError("Missing updated_password.");
+		}
+		if (current_password.current_password.length === 0) {
+			throw new BadRequestError("Missing current_password.");
+		}
+
+		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
+			user.email,
+		]);
+
+		const user_password = await db.query(
+			`SELECT password FROM users WHERE email = $1`,
+			[user.email]
+		);
+
+		const isValid = await bcrypt.compare(
+			current_password.current_password,
+			user_password.rows[0].password
+		);
+
+		if (isValid) {
+			const hashedPassword = await bcrypt.hash(
+				updated_password.updated_password,
+				BCRYPT_WORK_FACTOR
+			);
+
+			const results = await db.query(
+				`
+					UPDATE users
+					SET password = $1
+					WHERE id = $2
+				`,
+				[hashedPassword, userId.rows[0].id]
+			);
+
+			return results.rows[0];
+		}
+
+		throw new UnauthorizedError(
+			"The password you entered does not match your current password"
+		);
 	}
 
 	//delete user
@@ -316,7 +473,7 @@ class User {
 				pw_reset_token_exp = NULL
 			WHERE pw_reset_token = $2
 				AND pw_reset_token_exp > NOW()
-			RETURNING id, first_name, last_name, username, email profile_picture, date_of_birth, goal, genre_interest, created_at;
+			RETURNING id, first_name, last_name, username, email, profile_picture, date_of_birth, goal, genre_interest, created_at;
 			`,
 			[hashedPassword, token]
 		);
@@ -327,13 +484,6 @@ class User {
 
 		throw new BadRequestError("That token is either expired or invalid");
 	}
-
-	//change username
-	//
-	// change email
-	//
-	//change password when user is login
-	//
 }
 
 module.exports = User;

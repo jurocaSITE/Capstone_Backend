@@ -67,7 +67,7 @@ class EmailService {
 				<body>
 					<h1>Password Reset Notification</h1>
 					<br />
-					<p>You are receiving this email because you made a request to reset the password fro your account.</p>
+					<p>You are receiving this email because you made a request to reset the password for your account.</p>
 					<br />
 					<p>Click on the link below to finish the password reset process</p>
 					<a href="${resetPAsswordUrl}">${resetPAsswordUrl}</a>

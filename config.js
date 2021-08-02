@@ -8,7 +8,7 @@ const SECRET_KEY = process.env.SECRET_KEY || "secret_dev";
 
 const IS_TESTING = process.env.NODE_ENV === "test";
 
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost3000";
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000";
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 const EMAIL_SERVICE_ACTIVE = IS_TESTING

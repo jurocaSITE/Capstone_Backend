@@ -139,7 +139,8 @@ router.post("/recover", async (req, res, next) => {
 router.post("/password-reset", async (req, res, next) => {
 	try {
 		const { token } = req.query;
-		const { email } = req.body;
+		console.log("auth.js backend req.query:", token);
+		const { newPassword } = req.body;
 
 		const user = await User.resetPassword(token, newPassword);
 
@@ -154,6 +155,67 @@ router.post("/password-reset", async (req, res, next) => {
 		next(error);
 	}
 });
+
+// change username
+router.put(
+	"/change-username",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_username = await User.changeUsername({
+				user,
+				username: req.body,
+				password: req.body,
+			});
+
+			return res.status(204).json({ new_username });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+//change email
+router.put(
+	"/change-email",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_email = await User.changeEmail({
+				user,
+				email: req.body,
+				password: req.body,
+			});
+
+			return res.status(204).json({ new_email });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+//change password
+router.put(
+	"/change-password",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_password = await User.changePassword({
+				user,
+				updated_password: req.body,
+				current_password: req.body,
+			});
+
+			return res.status(204).json({ new_password });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 // I wan to take the token that was sent in this request and I want to turn it into a user in our data base, who can be then sent back to the client with all their information
 router.get("/me", security.requireAuthenticatedUser, async (req, res, next) => {
 	try {
