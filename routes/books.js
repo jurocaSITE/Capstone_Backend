@@ -3,7 +3,7 @@ const Book = require("../models/books");
 const router = express.Router();
 
 //get all books with specific keyword
-router.get("/search/:key_word/:offset", async (req, res, next) => {
+router.get("/search/:key_word/:offset?", async (req, res, next) => {
 	try {
 		const { key_word, offset } = req.params;
 		books = await Book.getAllBooksByKeyword(key_word, offset);

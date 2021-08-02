@@ -77,7 +77,7 @@ router.delete(
     try {
       const { rating_id } = req.params;
       const rating = await Rating.deleteRating( rating_id );
-      return res.status(201).json({ rating });
+      return res.status(200).json({ rating });
     } catch (err) {
       next(err);
     }

@@ -26,6 +26,7 @@ CREATE TABLE ratings_and_reviews (
 
 CREATE TABLE reviews_replies (
     id                SERIAL PRIMARY KEY,
+    user_id           INTEGER REFERENCES users(id) ON DELETE CASCADE,
     rating_id         INTEGER REFERENCES ratings_and_reviews(id) ON DELETE CASCADE,
     reply_body        TEXT NOT NULL,
     created_at        TIMESTAMP DEFAULT NOW(), 
