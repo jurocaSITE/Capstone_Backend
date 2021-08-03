@@ -139,7 +139,6 @@ router.post("/recover", async (req, res, next) => {
 router.post("/password-reset", async (req, res, next) => {
 	try {
 		const { token } = req.query;
-		console.log("auth.js backend req.query:", token);
 		const { newPassword } = req.body;
 
 		const user = await User.resetPassword(token, newPassword);
