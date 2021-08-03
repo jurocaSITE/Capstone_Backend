@@ -1,7 +1,11 @@
 const express = require("express");
 const User = require("../models/users");
-const { createUserJwt } = require("../utils/tokens"); //utility function to generate json we tokens
+const {
+	createUserJwt,
+	generatePasswordResetToken,
+} = require("../utils/tokens"); //utility function to generate json we tokens
 const security = require("../middleware/security"); // middleware
+const { emailService } = require("../services");
 const router = express.Router();
 
 //login
@@ -106,6 +110,105 @@ router.put(
 			});
 
 			return res.status(204).json({ new_reading_goal });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+// recover
+router.post("/recover", async (req, res, next) => {
+	try {
+		const { em } = req.body;
+		const token = generatePasswordResetToken();
+		const user = await User.savePasswordResetToken(em, token);
+
+		if (user) {
+			await emailService.sendPasswordResetEmail(user, token);
+		}
+
+		return res.status(200).json({
+			message: `If your account exists in our system, you should receive an email shortly.`,
+		});
+	} catch (error) {
+		next(error);
+	}
+});
+
+//password reset
+router.post("/password-reset", async (req, res, next) => {
+	try {
+		const { token } = req.query;
+		const { newPassword } = req.body;
+
+		const user = await User.resetPassword(token, newPassword);
+
+		if (user) {
+			await emailService.sendPasswordResetConfirmationEmail(user);
+		}
+
+		return res.status(200).json({
+			message: `Password successfully reset.`,
+		});
+	} catch (error) {
+		next(error);
+	}
+});
+
+// change username
+router.put(
+	"/change-username",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_username = await User.changeUsername({
+				user,
+				username: req.body,
+				password: req.body,
+			});
+
+			return res.status(204).json({ new_username });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+//change email
+router.put(
+	"/change-email",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_email = await User.changeEmail({
+				user,
+				email: req.body,
+				password: req.body,
+			});
+
+			return res.status(204).json({ new_email });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+//change password
+router.put(
+	"/change-password",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const new_password = await User.changePassword({
+				user,
+				updated_password: req.body,
+				current_password: req.body,
+			});
+
+			return res.status(204).json({ new_password });
 		} catch (err) {
 			next(err);
 		}
