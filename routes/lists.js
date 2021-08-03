@@ -96,7 +96,7 @@ router.delete(
 		}
 	}
 );
-//
+
 // add book to list
 router.post(
 	"/:list_id/add-book/:book_id",
@@ -113,8 +113,42 @@ router.post(
 	}
 );
 
-// delete books from lists
-//CODE HERE
+// delete book from list
+router.delete(
+	"/:list_id/delete-book/:book_id",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { list_id } = req.params;
+			const { book_id } = req.params;
+			const book_deleted = await List.deleteBookById({ list_id, book_id });
+			return res.status(200).json({ book_deleted });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+// // transfer book to another list
+// router.patch(
+// 	"/:list_id/transfer-book/:book_id/:new_list_id", 
+// 	security.requireAuthenticatedUser,
+// 	async (req, res, next) => {
+// 		try {
+
+// 			const { list_id } = req.params;
+// 			const { book_id } = req.params;
+// 			const { new_list_id } = req.params;
+// 			const book_added = await List.addBookById({ book_id, new_list_id });
+// 			console.log(book_added)
+// 			const book_deleted = await List.deleteBookById({ list_id, book_id });
+// 			console.log(book_deleted)
+// 			return res.status(200).json({ book_added });
+// 		} catch (err) {
+// 			next(err);
+// 		}
+// 	}
+// );
 
 //get list contents from specific list
 router.get(
