@@ -22,7 +22,9 @@ class List {
 			"Finished",
 		];
 		defaultListNames.forEach((name) => {
-			if (new_list_info.list_name === name) {
+			if (
+				new_list_info.list_name.toLocaleLowerCase() === name.toLocaleLowerCase()
+			) {
 				throw new BadRequestError(
 					`User are not allowed to create lists with the same name as a default list.`
 				);
