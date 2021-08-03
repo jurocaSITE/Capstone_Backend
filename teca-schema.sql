@@ -6,7 +6,7 @@ CREATE TABLE users (
     password           TEXT NOT NULL,
     email              TEXT NOT NULL UNIQUE CHECK (POSITION('@' IN email) > 1),
     profile_picture    TEXT,
-    date_of_birth      TIMESTAMP,
+    date_of_birth      DATE,
     goal               INTEGER,
     genre_interest     TEXT[],
     pw_reset_token     TEXT,

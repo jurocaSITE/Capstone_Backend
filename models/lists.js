@@ -14,6 +14,20 @@ class List {
 				);
 			}
 		});
+		// throw error if the user tries to name a list with a default name
+		const defaultListNames = [
+			"Want To Read",
+			"Currently Reading",
+			"Did Not Finish",
+			"Finished",
+		];
+		defaultListNames.forEach((name) => {
+			if (new_list_info.list_name === name) {
+				throw new BadRequestError(
+					`User are not allowed to create lists with the same name as a default list.`
+				);
+			}
+		});
 
 		//checking fields are not empty
 		if (new_list_info.list_name.length === 0) {
@@ -93,7 +107,7 @@ class List {
 
 		const result = await db.query(
 			`SELECT * FROM lists WHERE user_id = $1 AND list_name = $2 ORDER BY created_at ASC`,
-			[userId.rows[0].id, 'Currently Reading']
+			[userId.rows[0].id, "Currently Reading"]
 		);
 
 		return result.rows[0];

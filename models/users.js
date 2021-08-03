@@ -20,6 +20,7 @@ class User {
 	}
 
 	static async login(credentials) {
+		console.log("In login");
 		// user should submit their email and password
 		// if any of these fields are missing throw an error
 		const requiredFields = ["email", "password"];
@@ -323,7 +324,6 @@ class User {
 
 	//change email
 	static async changeEmail({ user, email, password }) {
-		console.log(user);
 		const requiredFields = ["email", "password"];
 		requiredFields.forEach((field) => {
 			if (!email.hasOwnProperty(field)) {
@@ -332,6 +332,9 @@ class User {
 				);
 			}
 		});
+		if (email.email.indexOf("@") <= 0) {
+			throw new BadRequestError("Invalid email.");
+		}
 		if (email.email.length === 0) {
 			throw new BadRequestError("Missing email.");
 		}
@@ -374,7 +377,6 @@ class User {
 
 	//change password when user is logged in
 	static async changePassword({ user, updated_password, current_password }) {
-		console.log(user);
 		const requiredFields = ["current_password", "updated_password"];
 		requiredFields.forEach((field) => {
 			if (!current_password.hasOwnProperty(field)) {
