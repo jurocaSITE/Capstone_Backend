@@ -64,6 +64,23 @@ class List {
 			}
 		});
 
+		// throw error if the user tries to name a list with a default name
+		const defaultListNames = [
+			"Want To Read",
+			"Currently Reading",
+			"Did Not Finish",
+			"Finished",
+		];
+		defaultListNames.forEach((name) => {
+			if (
+				new_list_info.list_name.toLocaleLowerCase() === name.toLocaleLowerCase()
+			) {
+				throw new BadRequestError(
+					`User are not allowed to create lists with the same name as a default list.`
+				);
+			}
+		});
+
 		//checking fields are not empty
 		if (new_list_info.list_name.length === 0) {
 			throw new BadRequestError("Missing list name.");
