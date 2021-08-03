@@ -89,10 +89,10 @@ class List {
 	static async getCurrentlyReadingListByUserId(user) {
 		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
 			user.email,
-		]);
+		]);	
 
 		const result = await db.query(
-			`SELECT * FROM lists WHERE user_id = $1 AND list_name = $2 ORDER BY created_at ASC`,
+			`SELECT * FROM lists WHERE user_id = $1 AND list_name = $2 ORDER BY created_at ASC;`,
 			[userId.rows[0].id, 'Currently Reading']
 		);
 
@@ -101,6 +101,22 @@ class List {
 
 	// add book by book id to list by list id
 	static async addBookById({ list_id, book_id }) {
+
+		const get_current_books = await db.query(
+			`SELECT book_id FROM list_contents WHERE list_id = $1;`,
+			[list_id]
+		);
+
+		const current_books_in_list = get_current_books.rows;
+		 
+		current_books_in_list.forEach((book) => {
+			if (book_id === book.book_id) {
+				throw new BadRequestError(
+					`Cannot add duplicate book to list.`
+				);
+			}
+		});
+
 		const results = await db.query(
 			`INSERT INTO list_contents (list_id, book_id) VALUES ($1, $2) RETURNING list_id, book_id;
 			`,
@@ -110,15 +126,17 @@ class List {
 		return results.rows[0];
 	}
 
-	// remove book by book id to list by list id
-	// static async removeBookById({ list_id, book_id }) {
-	// 	const results = await db.query(
-	// 		`DELETE FROM list_contents WHERE book_id=$1`,
-	// 		[user.book_id]
-	// 	);
-
-	// 	return results.rows[0];
-	// }
+	// delete book by book id to list by list id
+	static async deleteBookById({ list_id, book_id }) {
+		const results = await db.query(
+			`
+			DELETE FROM list_contents 
+			WHERE list_id = $1 AND book_id = $2
+			RETURNING (list_id, book_id);
+			`,
+			[list_id, book_id]
+		);
+	}
 
 	// get list contents of specific list
 	static async getListContents(list_id) {
@@ -141,6 +159,7 @@ class List {
 			[list_id]
 		);
 	}
+
 	// get list name by list contents id
 	static async getListNameById(list_id) {
 		const result = await db.query(`SELECT list_name FROM lists WHERE id = $1`, [
