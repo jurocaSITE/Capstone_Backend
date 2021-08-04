@@ -61,7 +61,7 @@ class EmailService {
 		const email = {
 			to: user.email,
 			from: this.emailFromAddress,
-			subject: `Reset you password for ${this.applicationName}`,
+			subject: `Reset your password for ${this.applicationName}`,
 			html: `
 			<html>
 				<body>
