@@ -21,6 +21,7 @@ app.use(morgan("tiny"));
 app.use(security.extractUserFromJwt);
 
 //! Routes
+app.use("/", (req, res, next) => {res.send({"ping": "pong"})}); //! this is a middleware too
 app.use("/auth", authRoutes); //! this is a middleware too
 app.use("/books", bookRoutes); //! this is a middleware too
 app.use("/lists", listRoutes); //! this is a middleware too
