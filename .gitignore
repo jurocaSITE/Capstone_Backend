@@ -120,3 +120,5 @@ dist
 # ignoring package files
 package-lock.json
 package.json
+
+notes.txt
