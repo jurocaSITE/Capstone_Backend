@@ -41,7 +41,7 @@ class User {
 			}
 		}
 		// if any of these go wrong, throw an error
-		throw new UnauthorizedError("Invalid username/password");
+		throw new UnauthorizedError("Invalid email/password combination");
 	}
 
 	static async register(credentials) {
