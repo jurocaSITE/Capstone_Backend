@@ -210,7 +210,7 @@ class User {
 				UPDATE users
 				SET genre_interest = $1
 				WHERE id = $2
-				RETURNING genre_interest;
+				RETURNING genre_interest as "genre_interests";
 			`,
 			[user_genre_interests.genre_interests, userId.rows[0].id]
 		);
