@@ -20,6 +20,7 @@ class List {
 			"Currently Reading",
 			"Did Not Finish",
 			"Finished",
+			"Reviewed Books",
 		];
 		defaultListNames.forEach((name) => {
 			if (
@@ -70,6 +71,7 @@ class List {
 			"Currently Reading",
 			"Did Not Finish",
 			"Finished",
+			"Reviewed Books",
 		];
 		defaultListNames.forEach((name) => {
 			if (
@@ -122,11 +124,11 @@ class List {
 	static async getCurrentlyReadingListByUserId(user) {
 		const userId = await db.query(`SELECT id FROM users WHERE email = $1`, [
 			user.email,
-		]);	
+		]);
 
 		const result = await db.query(
 			`SELECT * FROM lists WHERE user_id = $1 AND list_name = $2 ORDER BY created_at ASC;`,
-			[userId.rows[0].id, 'Currently Reading']
+			[userId.rows[0].id, "Currently Reading"]
 		);
 
 		return result.rows[0];
@@ -134,19 +136,16 @@ class List {
 
 	// add book by book id to list by list id
 	static async addBookById({ list_id, book_id }) {
-
 		const get_current_books = await db.query(
 			`SELECT book_id FROM list_contents WHERE list_id = $1;`,
 			[list_id]
 		);
 
 		const current_books_in_list = get_current_books.rows;
-		 
+
 		current_books_in_list.forEach((book) => {
 			if (book_id === book.book_id) {
-				throw new BadRequestError(
-					`Cannot add duplicate book to list.`
-				);
+				throw new BadRequestError(`Cannot add duplicate book to list.`);
 			}
 		});
 
@@ -157,6 +156,26 @@ class List {
 		);
 
 		return results.rows[0];
+	}
+
+	// add a book to Reviewed Books list.
+	static async addBookToReviewedList({ user, book_id }) {
+		// creating variable to hold id for Reviewed Books list
+		let list_id = -99;
+
+		// get all user lists
+		let lists = await List.getAllListsByUserId(user);
+
+		// go through all lists and find the id for Reviewed Books list
+		lists.forEach((list) => {
+			if (list.list_name === "Reviewed Books") {
+				// set id to the id of Reviewed Books list
+				list_id = list.id;
+			}
+		});
+
+		// add book to Reviewed Books list.
+		await List.addBookById({ list_id, book_id });
 	}
 
 	// delete book by book id to list by list id

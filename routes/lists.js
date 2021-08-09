@@ -37,33 +37,32 @@ router.get(
 );
 
 //get currently reading list by user id
-	router.get(
-		"/get-currently-reading",
-		security.requireAuthenticatedUser,
-		async (req, res, next) => {
-			try {
-				const { user } = res.locals;
-				const currently_reading = await List.getCurrentlyReadingListByUserId(user);
-				return res.status(200).json({ currently_reading });
-			} catch (err) {
-				next(err);
-			}
-		}
-	);
-
-// get list name by list id
 router.get(
-	"/get-list-name/:list_id",
+	"/get-currently-reading",
+	security.requireAuthenticatedUser,
 	async (req, res, next) => {
 		try {
-			const { list_id } = req.params;
-			const list_name = await List.getListNameById(list_id);
-			return res.status(200).json( list_name );
+			const { user } = res.locals;
+			const currently_reading = await List.getCurrentlyReadingListByUserId(
+				user
+			);
+			return res.status(200).json({ currently_reading });
 		} catch (err) {
 			next(err);
 		}
 	}
 );
+
+// get list name by list id
+router.get("/get-list-name/:list_id", async (req, res, next) => {
+	try {
+		const { list_id } = req.params;
+		const list_name = await List.getListNameById(list_id);
+		return res.status(200).json(list_name);
+	} catch (err) {
+		next(err);
+	}
+});
 //edit a list name and cover
 router.put(
 	"/edit/:list_id",
@@ -113,6 +112,22 @@ router.post(
 	}
 );
 
+// add book to Reviewed Book list
+router.post(
+	"/reviewed-book/list/add/:book_id",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const { book_id } = req.params;
+			const book_added = await List.addBookToReviewedList({ user, book_id });
+			return res.status(200).json();
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 // delete book from list
 router.delete(
 	"/:list_id/delete-book/:book_id",
@@ -131,7 +146,7 @@ router.delete(
 
 // // transfer book to another list
 // router.patch(
-// 	"/:list_id/transfer-book/:book_id/:new_list_id", 
+// 	"/:list_id/transfer-book/:book_id/:new_list_id",
 // 	security.requireAuthenticatedUser,
 // 	async (req, res, next) => {
 // 		try {
@@ -164,6 +179,5 @@ router.get(
 		}
 	}
 );
-
 
 module.exports = router;
