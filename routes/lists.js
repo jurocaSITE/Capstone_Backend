@@ -36,6 +36,36 @@ router.get(
 	}
 );
 
+// get default lists by user id
+router.get(
+	"/get-default-lists",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const default_lists = await List.getDefaultListsByUserId(user);
+			return res.status(200).json({ default_lists });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
+// get created lists by user id
+router.get(
+	"/get-created-lists",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const created_lists = await List.getCreatedListsByUserId(user);
+			return res.status(200).json({ created_lists });
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 //get currently reading list by user id
 	router.get(
 		"/get-currently-reading",
