@@ -131,7 +131,7 @@ class List {
     const result = await db.query(
       `SELECT * FROM lists 
 				WHERE user_id = $1 
-					AND list_name IN ($2, $3, $4, $5)
+					AND list_name IN ($2, $3, $4, $5, $6)
 				ORDER BY created_at ASC`,
       [
         userId.rows[0].id,
@@ -139,6 +139,7 @@ class List {
         "Currently Reading",
         "Did Not Finish",
         "Finished",
+        "Reviewed Books",
       ]
     );
 
@@ -155,14 +156,15 @@ class List {
     const result = await db.query(
       `SELECT * FROM lists 
 	  	WHERE user_id = $1
-		  AND list_name NOT IN ($2, $3, $4, $5)
-		ORDER BY created_at DESC`,
+		    AND list_name NOT IN ($2, $3, $4, $5, $6)
+		    ORDER BY created_at DESC`,
       [
         userId.rows[0].id,
         "Want To Read",
         "Currently Reading",
         "Did Not Finish",
         "Finished",
+        "Reviewed Books",
       ]
     );
 
@@ -182,7 +184,7 @@ class List {
 
     // get currently reading contents if they exist
     const list_contents = await Book.getBooksInList(result.rows[0].id);
-    const currently_reading = { ...result.rows[0], list_contents}
+    const currently_reading = { ...result.rows[0], list_contents };
 
     return currently_reading;
   }
@@ -212,24 +214,24 @@ class List {
   }
 
   // add a book to Reviewed Books list.
-	static async addBookToReviewedList({ user, book_id }) {
-		// creating variable to hold id for Reviewed Books list
-		let list_id = -99;
+  static async addBookToReviewedList({ user, book_id }) {
+    // creating variable to hold id for Reviewed Books list
+    let list_id = -99;
 
-		// get all user lists
-		let lists = await List.getAllListsByUserId(user);
+    // get all user lists
+    let lists = await List.getAllListsByUserId(user);
 
-		// go through all lists and find the id for Reviewed Books list
-		lists.forEach((list) => {
-			if (list.list_name === "Reviewed Books") {
-				// set id to the id of Reviewed Books list
-				list_id = list.id;
-			}
-		});
+    // go through all lists and find the id for Reviewed Books list
+    lists.forEach((list) => {
+      if (list.list_name === "Reviewed Books") {
+        // set id to the id of Reviewed Books list
+        list_id = list.id;
+      }
+    });
 
-		// add book to Reviewed Books list.
-		await List.addBookById({ list_id, book_id });
-	}
+    // add book to Reviewed Books list.
+    await List.addBookById({ list_id, book_id });
+  }
 
   // delete book by book id to list by list id
   static async deleteBookById({ list_id, book_id }) {
