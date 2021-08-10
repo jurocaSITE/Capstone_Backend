@@ -44,6 +44,25 @@ class User {
 		throw new UnauthorizedError("Invalid username/password");
 	}
 
+	static passwordValidation(password) {
+		if (password.match(/[A-Z]/) === null) {
+			throw new BadRequestError(
+				"Password must contain at least one capital letter."
+			);
+		}
+		if (password.match(/[0-9]/) === null) {
+			throw new BadRequestError("Password must contain at least one number.");
+		}
+		if (password.match(/[!@#$%^&*.]/) === null) {
+			throw new BadRequestError(
+				"Password must contain at least one special character."
+			);
+		}
+		if (password.length < 7) {
+			throw new BadRequestError("Password length must be greater than 7.");
+		}
+	}
+
 	static async register(credentials) {
 		// user should submit their first_name, last_name, username, email, password
 		// if any of these fields are missing throw an error
@@ -71,6 +90,8 @@ class User {
 		if (credentials.password.length === 0) {
 			throw new BadRequestError("Missing password.");
 		}
+		User.passwordValidation(credentials.password);
+
 		// Make sure no user aready exists in the systme with that email
 		// if one does throw an error
 		if (credentials.email.indexOf("@") <= 0) {
@@ -396,6 +417,7 @@ class User {
 		if (updated_password.updated_password.length === 0) {
 			throw new BadRequestError("Missing updated_password.");
 		}
+		User.passwordValidation(updated_password.updated_password);
 		if (current_password.current_password.length === 0) {
 			throw new BadRequestError("Missing current_password.");
 		}
