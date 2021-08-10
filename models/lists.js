@@ -21,6 +21,7 @@ class List {
       "Currently Reading",
       "Did Not Finish",
       "Finished",
+      "Reviewed Books",
     ];
     defaultListNames.forEach((name) => {
       if (
@@ -71,6 +72,7 @@ class List {
       "Currently Reading",
       "Did Not Finish",
       "Finished",
+      "Reviewed Books",
     ];
     defaultListNames.forEach((name) => {
       if (
@@ -208,6 +210,26 @@ class List {
 
     return results.rows[0];
   }
+
+  // add a book to Reviewed Books list.
+	static async addBookToReviewedList({ user, book_id }) {
+		// creating variable to hold id for Reviewed Books list
+		let list_id = -99;
+
+		// get all user lists
+		let lists = await List.getAllListsByUserId(user);
+
+		// go through all lists and find the id for Reviewed Books list
+		lists.forEach((list) => {
+			if (list.list_name === "Reviewed Books") {
+				// set id to the id of Reviewed Books list
+				list_id = list.id;
+			}
+		});
+
+		// add book to Reviewed Books list.
+		await List.addBookById({ list_id, book_id });
+	}
 
   // delete book by book id to list by list id
   static async deleteBookById({ list_id, book_id }) {

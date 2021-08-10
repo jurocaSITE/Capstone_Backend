@@ -143,6 +143,22 @@ router.post(
   }
 );
 
+// add book to Reviewed Book list
+router.post(
+	"/reviewed-book/list/add/:book_id",
+	security.requireAuthenticatedUser,
+	async (req, res, next) => {
+		try {
+			const { user } = res.locals;
+			const { book_id } = req.params;
+			const book_added = await List.addBookToReviewedList({ user, book_id });
+			return res.status(200).json();
+		} catch (err) {
+			next(err);
+		}
+	}
+);
+
 // delete book from list
 router.delete(
   "/:list_id/delete-book/:book_id",
