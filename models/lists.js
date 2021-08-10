@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const db = require("../db");
 const { BadRequestError, UnauthorizedError } = require("../utils/errors");
+const Book = require("./books");
 const { BCRYPT_WORK_FACTOR } = require("../config");
 
 class List {
@@ -177,7 +178,11 @@ class List {
       [userId.rows[0].id, "Currently Reading"]
     );
 
-    return result.rows[0];
+    // get currently reading contents if they exist
+    const list_contents = await Book.getBooksInList(result.rows[0].id);
+    const currently_reading = { ...result.rows[0], list_contents}
+
+    return currently_reading;
   }
 
   // add book by book id to list by list id
