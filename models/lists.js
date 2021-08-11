@@ -19,7 +19,7 @@ class List {
     const defaultListNames = [
       "Want To Read",
       "Currently Reading",
-      "Did Not Finish",
+      // "Did Not Finish",
       "Finished",
       "Reviewed Books",
     ];
@@ -70,7 +70,7 @@ class List {
     const defaultListNames = [
       "Want To Read",
       "Currently Reading",
-      "Did Not Finish",
+      // "Did Not Finish",
       "Finished",
       "Reviewed Books",
     ];
@@ -131,13 +131,12 @@ class List {
     const result = await db.query(
       `SELECT * FROM lists 
 				WHERE user_id = $1 
-					AND list_name IN ($2, $3, $4, $5, $6)
+					AND list_name IN ($2, $3, $4, $5)
 				ORDER BY created_at ASC`,
       [
         userId.rows[0].id,
         "Want To Read",
         "Currently Reading",
-        "Did Not Finish",
         "Finished",
         "Reviewed Books",
       ]
@@ -156,13 +155,12 @@ class List {
     const result = await db.query(
       `SELECT * FROM lists 
 	  	WHERE user_id = $1
-		    AND list_name NOT IN ($2, $3, $4, $5, $6)
+		    AND list_name NOT IN ($2, $3, $4, $5)
 		    ORDER BY created_at DESC`,
       [
         userId.rows[0].id,
         "Want To Read",
         "Currently Reading",
-        "Did Not Finish",
         "Finished",
         "Reviewed Books",
       ]
