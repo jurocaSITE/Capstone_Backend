@@ -66,8 +66,6 @@ class Replies {
   }
 
   static async createReply({ user, rating_id, reply }) {
-    console.log("Inside createReply model...");
-
     const requiredFields = ["replyBody"];
     requiredFields.forEach((field) => {
       if (!reply.hasOwnProperty(field)) {
@@ -96,6 +94,7 @@ class Replies {
                         reply_body AS "replyBody",
                         user_id AS "userId",
                         rating_id AS "ratingId",
+                        (SELECT username FROM users WHERE email = $1) AS "username",
                         created_at AS "createdAt",
                         updated_at AS "updatedAt"
             ;`,
@@ -105,7 +104,7 @@ class Replies {
     return res.rows[0];
   }
 
-  static async editReply({ reply_id, reply_update }) {
+  static async editReply({user, reply_id, reply_update }) {
     // edit a single rating
 
     // error handling
@@ -135,12 +134,14 @@ class Replies {
                       reply_body AS "replyBody",
                       rating_id AS "ratingId",
                       user_id AS "userId",
+                      (SELECT username FROM users WHERE email = $3) AS "username",
                       created_at AS "createdAt",
                       updated_at AS "updatedAt"
         `,
       [
         reply_update.replyBody,
-        reply_id
+        reply_id, 
+        user.email
       ]
     );
 
