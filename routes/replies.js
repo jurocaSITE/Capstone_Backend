@@ -11,7 +11,6 @@ const {
 router.post(
   "/rating/:rating_id",
   requireAuthenticatedUser,
-  authedUserIsNotRatingOwner,
   async (req, res, next) => {
     try {
       const { user } = res.locals;
@@ -69,7 +68,9 @@ router.patch(
   async (req, res, next) => {
     try {
       const { reply_id } = req.params;
+      const { user } = res.locals;
       const reply = await Replies.editReply({
+        user,
         reply_id,
         reply_update: req.body,
       });
